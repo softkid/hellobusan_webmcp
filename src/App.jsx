@@ -28,6 +28,15 @@ export default function App() {
   const [permissions, setPermissions] = useState(DEFAULT_PERMISSIONS);
   const [budgetLimit, setBudgetLimit] = useState(50000);
 
+  // Google Authenticated User State
+  const [user, setUser] = useState({
+    name: "Kim Minjun",
+    email: "minjun.kim@gmail.com",
+    picture: "https://lh3.googleusercontent.com/a/default-user=s96-c",
+    plan: "Premium Plan",
+    isAuthenticated: true
+  });
+
   const [itinerary, setItinerary] = useState([]);
   const [blackBoxLogs, setBlackBoxLogs] = useState([]);
   const [agentState, setAgentState] = useState({
@@ -170,7 +179,7 @@ export default function App() {
   return (
     <div style={{ maxWidth: "1600px", margin: "0 auto", padding: "0.85rem 1.25rem", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       
-      {/* Top Header Bar with i18n Switcher */}
+      {/* Top Header Bar with i18n & Google Auth */}
       <Header
         goalPrompt={goalPrompt}
         setGoalPrompt={setGoalPrompt}
@@ -180,6 +189,8 @@ export default function App() {
         setActiveTab={setActiveTab}
         lang={lang}
         setLang={setLang}
+        user={user}
+        setUser={setUser}
       />
 
       {/* Main Tab Views */}
