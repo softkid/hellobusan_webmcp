@@ -199,13 +199,13 @@ export default function App() {
       ) : activeTab === "doc" ? (
         <WebMCPDoc toolHandlers={toolHandlers} lang={lang} />
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", flex: 1 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", flex: 1 }}>
           
           {/* Multi-Agent Swarm Visualizer Panel */}
           <SwarmPanel isWorking={agentState.isWorking} currentStep={agentState.currentStep} lang={lang} />
 
-          {/* Top Row: 3 Panels Responsive Grid */}
-          <div className="top-grid-container" style={{ display: "grid", gridTemplateColumns: "270px 1fr 310px", gap: "0.85rem", minHeight: "500px", alignItems: "stretch" }}>
+          {/* Top Row: 3 Panels Grid (280px 1fr 280px) */}
+          <div className="top-grid-container" style={{ display: "grid", gridTemplateColumns: "280px 1fr 280px", gap: "0.85rem", height: "530px" }}>
             
             {/* Left Panel: Agent Wallet */}
             <AgentWallet
@@ -231,19 +231,19 @@ export default function App() {
 
           </div>
 
-          {/* Bottom Row: 4 Panels Responsive Grid */}
-          <div className="bottom-grid-container" style={{ display: "grid", gridTemplateColumns: "260px 1.4fr 1.3fr 260px", gap: "0.85rem", minHeight: "220px", alignItems: "stretch" }}>
+          {/* Bottom Row: 4 Panels Grid (280px 1fr 1fr 280px - PERFECT VERTICAL ALIGNMENT WITH TOP ROW) */}
+          <div className="bottom-grid-container" style={{ display: "grid", gridTemplateColumns: "280px 1fr 1fr 280px", gap: "0.85rem", height: "250px" }}>
             
-            {/* Panel 1: Agent Activity */}
+            {/* Panel 1: Agent Activity (Aligned to 280px Left Column) */}
             <AgentActivity logs={blackBoxLogs} lang={lang} />
 
-            {/* Panel 2: Agent Black Box */}
+            {/* Panel 2: Agent Black Box (Center Left 1fr) */}
             <AgentBlackBox lang={lang} />
 
-            {/* Panel 3: WebMCP Evaluation */}
+            {/* Panel 3: WebMCP Evaluation (Center Right 1fr) */}
             <WebMcpEvaluation lang={lang} />
 
-            {/* Panel 4: Agent Assistant */}
+            {/* Panel 4: Agent Assistant (Aligned to 280px Right Column) */}
             <AgentAssistant lang={lang} />
 
           </div>
