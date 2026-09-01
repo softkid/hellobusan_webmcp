@@ -1,0 +1,38 @@
+import React from "react";
+import { UserCheck, Bot, Building2 } from "lucide-react";
+
+export default function Footer() {
+  return (
+    <footer style={{
+      marginTop: "1rem",
+      padding: "0.75rem 1rem",
+      borderTop: "1px solid var(--border)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "1.5rem",
+      fontSize: "0.85rem",
+      color: "var(--text-muted)",
+      fontFamily: "var(--font-heading)"
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+        <UserCheck size={16} color="#00f2fe" />
+        <strong style={{ color: "#ffffff" }}>You decide.</strong>
+      </div>
+
+      <span style={{ color: "var(--text-dim)" }}>+</span>
+
+      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+        <Bot size={16} color="#9e77ed" />
+        <strong style={{ color: "#ffffff" }}>Your agent acts.</strong>
+      </div>
+
+      <span style={{ color: "var(--text-dim)" }}>+</span>
+
+      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+        <Building2 size={16} color="#34d399" />
+        <strong style={{ color: "#ffffff" }}>Busan responds.</strong>
+      </div>
+    </footer>
+  );
+}

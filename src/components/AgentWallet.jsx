@@ -1,11 +1,21 @@
 import React from "react";
-import { Shield, Lock, AlertTriangle, CheckCircle, Wallet } from "lucide-react";
-import { TOOL_NAMES } from "../constants/webmcpConfig.js";
+import { Shield, Lock, AlertTriangle, CheckCircle, Search, Scale, MapPin, Calendar, Ticket, Bell, CreditCard, UserCheck } from "lucide-react";
 
 export default function AgentWallet({ permissions, setPermissions, budgetLimit, setBudgetLimit }) {
-  const togglePolicy = (toolName) => {
+  const permissionItems = [
+    { key: "search_places", label: "검색 (Search)", icon: Search, defaultPolicy: "ALLOW" },
+    { key: "compare", label: "비교 (Compare)", icon: Scale, defaultPolicy: "ALLOW" },
+    { key: "calculate_route", label: "경로 계산 (Route)", icon: MapPin, defaultPolicy: "ALLOW" },
+    { key: "update_itinerary", label: "일정 수정 (Schedule)", icon: Calendar, defaultPolicy: "ALLOW" },
+    { key: "check_availability", label: "예약 가능 확인 (Check)", icon: Ticket, defaultPolicy: "ALLOW" },
+    { key: "request_reservation", label: "예약 (Reservation)", icon: Bell, defaultPolicy: "ASK" },
+    { key: "payment", label: "결제 (Payment)", icon: CreditCard, defaultPolicy: "DENY" },
+    { key: "profile", label: "개인정보 사용 (Profile)", icon: UserCheck, defaultPolicy: "DENY" }
+  ];
+
+  const togglePolicy = (key) => {
     setPermissions((prev) => {
-      const current = prev[toolName]?.policy || "ALLOW";
+      const current = prev[key]?.policy || "ALLOW";
       let next = "ALLOW";
       if (current === "ALLOW") next = "ASK";
       else if (current === "ASK") next = "DENY";
@@ -13,8 +23,8 @@ export default function AgentWallet({ permissions, setPermissions, budgetLimit, 
 
       return {
         ...prev,
-        [toolName]: {
-          ...prev[toolName],
+        [key]: {
+          ...prev[key],
           policy: next
         }
       };
@@ -22,104 +32,124 @@ export default function AgentWallet({ permissions, setPermissions, budgetLimit, 
   };
 
   return (
-    <div className="glass-panel" style={{ padding: "1.25rem", height: "100%" }}>
-      {/* Title */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <Shield size={20} color="#00f2fe" />
-          <h2 style={{ fontSize: "1.05rem", margin: 0 }}>Agent Wallet (권한 지갑)</h2>
+    <div className="glass-panel" style={{ padding: "1rem", height: "100%", display: "flex", flexDirection: "column" }}>
+      
+      {/* Title Bar */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
+        <div>
+          <h2 style={{ fontSize: "0.95rem", margin: 0, letterSpacing: "0.02em", color: "#ffffff" }}>
+            AGENT WALLET
+          </h2>
+          <span style={{ fontSize: "0.7rem", color: "var(--text-dim)" }}>AI 권한 지갑</span>
         </div>
-        <span className="badge badge-allow">Human Control</span>
+        <button className="btn-secondary" style={{ padding: "0.25rem 0.55rem", fontSize: "0.7rem" }}>
+          Edit
+        </button>
       </div>
 
-      <p style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginBottom: "1rem", lineHeight: 1.4 }}>
-        사람이 AI에게 허용할 권한의 범위를 직접 설정합니다. 권한 제약은 웹 및 브라우저 Execution Engine에서 엄격히 검증됩니다.
-      </p>
-
-      {/* Daily Budget Slider */}
+      {/* Top Banner Box */}
       <div style={{
-        background: "rgba(0,0,0,0.3)",
-        padding: "0.85rem 1rem",
+        background: "linear-gradient(135deg, rgba(0, 242, 254, 0.1) 0%, rgba(127, 86, 217, 0.15) 100%)",
+        border: "1px solid rgba(0, 242, 254, 0.25)",
         borderRadius: "10px",
-        border: "1px solid var(--border)",
-        marginBottom: "1rem"
+        padding: "0.85rem",
+        marginBottom: "0.85rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between"
       }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-            <Wallet size={14} color="#00f2fe" /> Daily Spending Limit (일일 한도)
-          </span>
-          <strong style={{ fontSize: "0.95rem", color: "#00f2fe", fontFamily: "var(--font-mono)" }}>
-            ₩{budgetLimit.toLocaleString()}
+        <div>
+          <strong style={{ fontSize: "0.9rem", color: "#00f2fe", display: "block" }}>
+            You stay in control.
           </strong>
+          <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+            AI가 사용할 수 있는 권한을 직접 설정하세요.
+          </span>
         </div>
-        <input
-          type="range"
-          min="10000"
-          max="200000"
-          step="5000"
-          value={budgetLimit}
-          onChange={(e) => setBudgetLimit(Number(e.target.value))}
-          style={{ width: "100%", accentColor: "#00f2fe", cursor: "pointer" }}
-        />
+        <div style={{
+          width: "36px",
+          height: "36px",
+          borderRadius: "8px",
+          background: "rgba(0, 242, 254, 0.2)",
+          border: "1px solid rgba(0, 242, 254, 0.4)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}>
+          <Shield size={20} color="#00f2fe" />
+        </div>
       </div>
 
-      {/* Permission Tool List */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", maxHeight: "380px", overflowY: "auto", paddingRight: "0.25rem" }}>
-        {Object.entries(permissions).map(([toolName, def]) => {
-          const policy = def.policy;
+      {/* Permissions List */}
+      <div style={{ fontSize: "0.7rem", color: "var(--text-dim)", marginBottom: "0.4rem", fontWeight: 700 }}>
+        AI PERMISSIONS <span style={{ float: "right" }}>권한 설정</span>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", flex: 1, overflowY: "auto", paddingRight: "0.2rem" }}>
+        {permissionItems.map((item) => {
+          const IconComp = item.icon;
+          const currentPolicy = permissions[item.key]?.policy || item.defaultPolicy;
+
           return (
             <div
-              key={toolName}
+              key={item.key}
+              onClick={() => item.key !== "payment" && item.key !== "profile" && togglePolicy(item.key)}
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                padding: "0.6rem 0.85rem",
+                padding: "0.5rem 0.65rem",
                 borderRadius: "8px",
-                background: "rgba(15, 23, 42, 0.6)",
-                border: "1px solid var(--border)"
+                background: "rgba(10, 15, 26, 0.7)",
+                border: "1px solid var(--border)",
+                cursor: item.key === "payment" || item.key === "profile" ? "not-allowed" : "pointer"
               }}
             >
-              <div>
-                <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-main)" }}>
-                  {def.label}
-                </div>
-                <div style={{ fontSize: "0.7rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>
-                  {toolName}
-                </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <IconComp size={14} color={currentPolicy === "ALLOW" ? "#00f2fe" : currentPolicy === "ASK" ? "#ffb703" : "#ff5252"} />
+                <span style={{ fontSize: "0.78rem", color: "var(--text-main)" }}>
+                  {item.label}
+                </span>
               </div>
 
-              <button
-                onClick={() => togglePolicy(toolName)}
-                style={{ border: "none", background: "transparent", cursor: "pointer" }}
-                title="Click to toggle: ALLOW -> ASK -> DENY"
-              >
-                {policy === "ALLOW" && (
-                  <span className="badge badge-allow" style={{ display: "flex", alignItems: "center", gap: "0.2rem" }}>
-                    <CheckCircle size={11} /> ALLOW
-                  </span>
-                )}
-                {policy === "ASK" && (
-                  <span className="badge badge-ask" style={{ display: "flex", alignItems: "center", gap: "0.2rem" }}>
-                    <AlertTriangle size={11} /> ASK
-                  </span>
-                )}
-                {policy === "DENY" && (
-                  <span className="badge badge-deny" style={{ display: "flex", alignItems: "center", gap: "0.2rem" }}>
-                    <Lock size={11} /> DENY
-                  </span>
-                )}
-              </button>
+              {currentPolicy === "ALLOW" && (
+                <span className="badge-status badge-allow">
+                  <CheckCircle size={10} /> 허용
+                </span>
+              )}
+              {currentPolicy === "ASK" && (
+                <span className="badge-status badge-ask">
+                  <AlertTriangle size={10} /> 승인 필요
+                </span>
+              )}
+              {currentPolicy === "DENY" && (
+                <span className="badge-status badge-deny">
+                  <Lock size={10} /> 잠금
+                </span>
+              )}
             </div>
           );
         })}
       </div>
 
-      {/* Bottom Safety Guarantee */}
-      <div style={{ marginTop: "1rem", paddingTop: "0.75rem", borderTop: "1px solid var(--border)", fontSize: "0.75rem", color: "var(--text-dim)", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-        <Lock size={13} color="#10b981" />
-        <span>Direct Payment & Personal Data Mutations are hard-locked in MVP.</span>
+      {/* Daily Limit Bar */}
+      <div style={{
+        marginTop: "0.85rem",
+        paddingTop: "0.75rem",
+        borderTop: "1px solid var(--border)",
+        fontSize: "0.75rem"
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.3rem" }}>
+          <span style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>DAILY LIMIT (일일 사용 한도)</span>
+          <strong style={{ color: "#34d399", fontFamily: "var(--font-mono)" }}>
+            ₩{budgetLimit.toLocaleString()} <span style={{ color: "var(--text-dim)", fontWeight: 400 }}>/ ₩50,000</span>
+          </strong>
+        </div>
+        <div style={{ width: "100%", height: "5px", background: "rgba(255,255,255,0.1)", borderRadius: "3px", overflow: "hidden" }}>
+          <div style={{ width: "100%", height: "100%", background: "linear-gradient(90deg, #00f2fe, #34d399)", borderRadius: "3px" }}></div>
+        </div>
       </div>
+
     </div>
   );
 }

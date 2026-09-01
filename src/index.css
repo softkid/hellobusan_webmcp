@@ -1,18 +1,20 @@
 :root {
-  --bg-dark: #070913;
-  --bg-card: rgba(15, 23, 42, 0.75);
+  --bg-dark: #070a13;
+  --bg-panel: #0d121f;
+  --bg-card: rgba(16, 24, 40, 0.75);
   --bg-card-hover: rgba(30, 41, 59, 0.85);
-  --bg-panel: #0d1322;
-  --border: rgba(255, 255, 255, 0.1);
+  --border: rgba(255, 255, 255, 0.08);
   --border-active: rgba(0, 242, 254, 0.4);
   
   --primary: #00f2fe;
   --primary-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-  --accent-purple: #7f56d9;
-  --accent-neon: #00ffc8;
-  --warning: #ff9f43;
-  --danger: #ff5252;
-  --success: #10b981;
+  --purple-gradient: linear-gradient(135deg, #7f56d9 0%, #9e77ed 100%);
+  
+  --accent-cyan: #00f2fe;
+  --accent-purple: #9e77ed;
+  --accent-amber: #ffb703;
+  --accent-red: #ff5252;
+  --accent-green: #34d399;
 
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
@@ -23,11 +25,8 @@
   --font-mono: 'JetBrains Mono', monospace;
 
   --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-
-  --shadow-glow: 0 0 25px rgba(0, 242, 254, 0.15);
-  --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+  --radius-md: 10px;
+  --radius-lg: 14px;
 }
 
 * {
@@ -40,13 +39,12 @@ body {
   background-color: var(--bg-dark);
   color: var(--text-main);
   font-family: var(--font-sans);
-  line-height: 1.5;
+  line-height: 1.45;
   overflow-x: hidden;
   min-height: 100vh;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(0, 242, 254, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(127, 86, 217, 0.05) 0%, transparent 40%);
-  background-attachment: fixed;
+    radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.04) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(127, 86, 217, 0.04) 0%, transparent 45%);
 }
 
 /* Typography */
@@ -54,152 +52,85 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text-main);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
-/* Glassmorphism panel */
+/* Panel & Glass Styling */
 .glass-panel {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--bg-panel);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .glass-panel-glow {
-  background: var(--bg-card);
-  backdrop-filter: blur(16px);
+  background: var(--bg-panel);
   border: 1px solid var(--border-active);
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
 }
 
-/* Custom Scrollbars */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(10, 15, 26, 0.8);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
 }
 
-/* Leaflet Custom Styling for Dark Theme */
+/* Leaflet Custom Styling for Dark Map */
 .leaflet-container {
-  background-color: #0d1322 !important;
+  background-color: #080c16 !important;
   font-family: var(--font-sans) !important;
   border-radius: var(--radius-md);
 }
 
-.leaflet-popup-content-wrapper, .leaflet-popup-tip {
-  background: #0f172a !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(0, 242, 254, 0.3);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-}
-
-.leaflet-popup-content {
-  margin: 12px 16px !important;
-  line-height: 1.4 !important;
-}
-
-/* Button & Controls */
-.btn-primary {
-  background: var(--primary-gradient);
-  color: #070913;
-  font-weight: 600;
-  border: none;
-  padding: 0.65rem 1.25rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
+/* Badges */
+.badge-status {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s ease;
-  font-family: var(--font-heading);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-main);
-  border: 1px solid var(--border);
-  padding: 0.65rem 1.25rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s ease;
-  font-family: var(--font-heading);
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-/* Status Badges */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  gap: 0.25rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
 }
 
 .badge-allow {
-  background: rgba(16, 185, 129, 0.15);
+  background: rgba(52, 211, 153, 0.15);
   color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(52, 211, 153, 0.3);
 }
 
 .badge-ask {
-  background: rgba(255, 159, 67, 0.15);
+  background: rgba(255, 183, 3, 0.15);
   color: #ffb703;
-  border: 1px solid rgba(255, 159, 67, 0.3);
+  border: 1px solid rgba(255, 183, 3, 0.3);
 }
 
 .badge-deny {
   background: rgba(255, 82, 82, 0.15);
-  color: #ff6b6b;
+  color: #ff5252;
   border: 1px solid rgba(255, 82, 82, 0.3);
 }
 
+.badge-read {
+  background: rgba(0, 242, 254, 0.1);
+  color: #00f2fe;
+  border: 1px solid rgba(0, 242, 254, 0.25);
+}
+
 /* Animations */
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.9; }
-}
-
-.pulse-dot {
-  width: 8px;
-  height: 8px;
-  background-color: var(--primary);
-  border-radius: 50%;
-  box-shadow: 0 0 10px var(--primary);
-  animation: pulse-glow 1.8s infinite ease-in-out;
-}
-
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
-
-.spin-icon {
-  animation: spin 1s linear infinite;
-}
+.spin-icon { animation: spin 1s linear infinite; }

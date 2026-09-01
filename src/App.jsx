@@ -1,15 +1,18 @@
 import React, { useState, useRef, useCallback } from "react";
 import Header from "./components/Header.jsx";
-import GoalInput from "./components/GoalInput.jsx";
 import AgentWallet from "./components/AgentWallet.jsx";
-import BusanMap from "./components/BusanMap.jsx";
-import ItineraryView from "./components/ItineraryView.jsx";
-import BlackBoxLog from "./components/BlackBoxLog.jsx";
+import AIPlanMap from "./components/AIPlanMap.jsx";
+import WebMcpNetwork from "./components/WebMcpNetwork.jsx";
+
+import AgentActivity from "./components/AgentActivity.jsx";
+import AgentBlackBox from "./components/AgentBlackBox.jsx";
+import WebMcpEvaluation from "./components/WebMcpEvaluation.jsx";
+import AgentAssistant from "./components/AgentAssistant.jsx";
+
 import ApprovalModal from "./components/ApprovalModal.jsx";
 import WebMCPBenchmark from "./components/WebMCPBenchmark.jsx";
-import AgentNetworkPanel from "./components/AgentNetworkPanel.jsx";
-import SummaryBanner from "./components/SummaryBanner.jsx";
 import WebMCPDoc from "./components/WebMCPDoc.jsx";
+import Footer from "./components/Footer.jsx";
 
 import useHelloBusanMCP from "./hooks/useHelloBusanMCP.js";
 import { runAgentWorkflow } from "./services/agentEngine.js";
@@ -19,7 +22,7 @@ import { BUSAN_PLACES, BUSAN_RESTAURANTS, BUSAN_EVENTS, BUSAN_WEATHER } from "./
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("workspace"); // workspace | doc | benchmark
-  const [goalPrompt, setGoalPrompt] = useState(PRESET_GOALS[0].prompt);
+  const [goalPrompt, setGoalPrompt] = useState("오늘 아이와 5만원으로 부산에서 6시간 즐길 수 있는 코스를 만들어줘.");
   const [permissions, setPermissions] = useState(DEFAULT_PERMISSIONS);
   const [budgetLimit, setBudgetLimit] = useState(50000);
 
@@ -152,7 +155,7 @@ export default function App() {
 
   // Reset Demo
   const handleReset = () => {
-    setGoalPrompt(PRESET_GOALS[0].prompt);
+    setGoalPrompt("오늘 아이와 5만원으로 부산에서 6시간 즐길 수 있는 코스를 만들어줘.");
     setItinerary([]);
     setBlackBoxLogs([]);
     setPermissions(DEFAULT_PERMISSIONS);
@@ -163,13 +166,16 @@ export default function App() {
   const totalCost = itinerary.reduce((sum, item) => sum + (item.cost || 0), 0);
 
   return (
-    <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "1.25rem 1.5rem" }}>
-      {/* Header */}
+    <div style={{ maxWidth: "1600px", margin: "0 auto", padding: "1rem 1.25rem", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      
+      {/* Top Header Bar */}
       <Header
-        toolCount={Object.keys(DEFAULT_PERMISSIONS).length}
+        goalPrompt={goalPrompt}
+        setGoalPrompt={setGoalPrompt}
+        isWorking={agentState.isWorking}
+        onRunAgent={handleRunAgent}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onReset={handleReset}
       />
 
       {/* Main Tab Views */}
@@ -178,47 +184,52 @@ export default function App() {
       ) : activeTab === "doc" ? (
         <WebMCPDoc toolHandlers={toolHandlers} />
       ) : (
-        <>
-          {/* Natural Language Goal Input Bar */}
-          <GoalInput
-            goalPrompt={goalPrompt}
-            setGoalPrompt={setGoalPrompt}
-            isWorking={agentState.isWorking}
-            onRunAgent={handleRunAgent}
-          />
-
-          {/* Outcome Summary Banner (Appears when finished) */}
-          {agentState.isFinished && (
-            <SummaryBanner currentStep={agentState.currentStep} onReset={handleReset} />
-          )}
-
-          {/* Main Workspace 3-Column Grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "310px 1fr 370px", gap: "1rem", alignItems: "start" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", flex: 1 }}>
+          
+          {/* Top Row: 3 Panels Grid (Agent Wallet | AI Plan Map | WebMCP Network) */}
+          <div style={{ display: "grid", gridTemplateColumns: "270px 1fr 310px", gap: "1rem", height: "540px" }}>
             
-            {/* Left Column: Agent Permission Wallet & Network */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <AgentWallet
-                permissions={permissions}
-                setPermissions={setPermissions}
-                budgetLimit={budgetLimit}
-                setBudgetLimit={setBudgetLimit}
-              />
-              <AgentNetworkPanel />
-            </div>
+            {/* Left Panel: Agent Wallet */}
+            <AgentWallet
+              permissions={permissions}
+              setPermissions={setPermissions}
+              budgetLimit={budgetLimit}
+              setBudgetLimit={setBudgetLimit}
+            />
 
-            {/* Middle Column: Busan Map & Itinerary Timeline */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <BusanMap itinerary={itinerary} />
-              <ItineraryView itinerary={itinerary} totalCost={totalCost} budgetLimit={budgetLimit} />
-            </div>
+            {/* Center Panel: AI Plan & Interactive Map */}
+            <AIPlanMap
+              itinerary={itinerary}
+              totalCost={totalCost}
+              dailyBudgetLimit={budgetLimit}
+            />
 
-            {/* Right Column: Agent Black Box Audit Log */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <BlackBoxLog logs={blackBoxLogs} />
-            </div>
+            {/* Right Panel: WebMCP Network */}
+            <WebMcpNetwork />
 
           </div>
-        </>
+
+          {/* Bottom Row: 4 Panels Grid (Activity | Black Box | Evaluation | Assistant) */}
+          <div style={{ display: "grid", gridTemplateColumns: "260px 1.4fr 1.3fr 260px", gap: "1rem", height: "240px" }}>
+            
+            {/* Panel 1: Agent Activity */}
+            <AgentActivity logs={blackBoxLogs} />
+
+            {/* Panel 2: Agent Black Box */}
+            <AgentBlackBox />
+
+            {/* Panel 3: WebMCP Evaluation */}
+            <WebMcpEvaluation />
+
+            {/* Panel 4: Agent Assistant */}
+            <AgentAssistant />
+
+          </div>
+
+          {/* Footer Tagline */}
+          <Footer />
+
+        </div>
       )}
 
       {/* Human-in-the-Loop Approval Modal Dialog */}
