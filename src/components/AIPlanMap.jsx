@@ -1,21 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
-import { MapPin, Save, CloudRain, Clock, DollarSign, Layers } from "lucide-react";
+import { Save, Layers } from "lucide-react";
+import { TRANSLATIONS } from "../constants/translations.js";
 
-export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
+export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang = "en" }) {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
   const mapContainerRef = useRef(null);
   const leafletMapRef = useRef(null);
   const markersRef = useRef([]);
   const polylineRef = useRef(null);
   const [mapType, setMapType] = useState("dark"); // dark | satellite
 
-  // Default 6-item Itinerary Cards matching Main UI.png design
+  // Default 6-item English Itinerary Cards
   const defaultItinerary = [
     {
       step: 1,
       time: "10:00",
-      title: "감천문화마을",
-      subtitle: "산책 & 사진",
+      title: t.place1Title,
+      subtitle: t.place1Sub,
       cost: 0,
       image: "https://images.unsplash.com/photo-1578637387939-43c525550085?w=400",
       lat: 35.0975,
@@ -24,8 +26,8 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
     {
       step: 2,
       time: "12:00",
-      title: "로컬 맛집 점심",
-      subtitle: "아이 동반 OK",
+      title: t.place2Title,
+      subtitle: t.place2Sub,
       cost: 18000,
       image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400",
       lat: 35.1704,
@@ -34,8 +36,8 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
     {
       step: 3,
       time: "14:00",
-      title: "국립부산과학관",
-      subtitle: "체험 전시",
+      title: t.place3Title,
+      subtitle: t.place3Sub,
       cost: 4000,
       image: "https://images.unsplash.com/photo-1567449303078-57ad995bd301?w=400",
       lat: 35.2045,
@@ -44,8 +46,8 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
     {
       step: 4,
       time: "16:30",
-      title: "해운대 블루라인파크",
-      subtitle: "해변 열차",
+      title: t.place4Title,
+      subtitle: t.place4Sub,
       cost: 7000,
       image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400",
       lat: 35.1627,
@@ -54,8 +56,8 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
     {
       step: 5,
       time: "18:30",
-      title: "광안리 해변 산책",
-      subtitle: "야경 & 휴식",
+      title: t.place5Title,
+      subtitle: t.place5Sub,
       cost: 0,
       image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400",
       lat: 35.1532,
@@ -64,8 +66,8 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
     {
       step: 6,
       time: "19:30",
-      title: "저녁 식사",
-      subtitle: "해산물/한식",
+      title: t.place6Title,
+      subtitle: t.place6Sub,
       cost: 15000,
       image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400",
       lat: 35.1588,
@@ -77,7 +79,7 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
     step: idx + 1,
     time: item.time ? item.time.split(" - ")[0] : `1${idx + 0}:00`,
     title: item.title,
-    subtitle: item.category || "추천 장소",
+    subtitle: item.category || "Recommended Venue",
     cost: item.cost || 0,
     image: defaultItinerary[idx % defaultItinerary.length].image,
     lat: item.lat || defaultItinerary[idx % defaultItinerary.length].lat,
@@ -107,7 +109,6 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
 
     const map = leafletMapRef.current;
 
-    // Clear old markers
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
     if (polylineRef.current) {
@@ -115,7 +116,6 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
       polylineRef.current = null;
     }
 
-    // Numbered Pin Icon Generator
     const createNumberedIcon = (number) => {
       return L.divIcon({
         className: "custom-map-pin",
@@ -143,7 +143,6 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
       });
     };
 
-    // Add Numbered Markers 1 to N
     activeItems.forEach((item) => {
       if (item.lat && item.lng) {
         const marker = L.marker([item.lat, item.lng], {
@@ -161,7 +160,6 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
       }
     });
 
-    // Draw Connected Route Line
     const routeCoords = activeItems
       .filter((item) => item.lat && item.lng)
       .map((item) => [item.lat, item.lng]);
@@ -187,28 +185,28 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
             <h2 style={{ fontSize: "1.05rem", margin: 0, color: "#ffffff", letterSpacing: "0.01em" }}>
-              AI PLAN
+              {t.aiPlanTitle}
             </h2>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>AI가 만든 부산 일정 (제안)</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{t.aiPlanSub}</span>
           </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
           <div style={{ fontSize: "0.78rem" }}>
-            <span style={{ color: "var(--text-muted)" }}>예상 비용 </span>
+            <span style={{ color: "var(--text-muted)" }}>{t.estCost} </span>
             <strong style={{ color: "#34d399", fontFamily: "var(--font-mono)" }}>₩{currentTotalCost.toLocaleString()}</strong>
           </div>
           <div style={{ fontSize: "0.78rem" }}>
-            <span style={{ color: "var(--text-muted)" }}>예상 시간 </span>
-            <strong style={{ color: "#ffffff", fontFamily: "var(--font-mono)" }}>6시간</strong>
+            <span style={{ color: "var(--text-muted)" }}>{t.estTime} </span>
+            <strong style={{ color: "#ffffff", fontFamily: "var(--font-mono)" }}>6h</strong>
           </div>
           <button className="btn-primary" style={{ padding: "0.3rem 0.75rem", fontSize: "0.75rem", background: "linear-gradient(135deg, #7f56d9 0%, #9e77ed 100%)", color: "#ffffff" }}>
-            <Save size={13} /> 일정 저장
+            <Save size={13} /> {t.savePlan}
           </button>
         </div>
       </div>
 
-      {/* Horizontal Itinerary Cards Carousel (6 Cards matching Main UI.png) */}
+      {/* Horizontal Itinerary Cards Carousel */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "0.5rem" }}>
         {activeItems.map((item) => (
           <div
@@ -224,7 +222,6 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
               position: "relative"
             }}
           >
-            {/* Step Number Badge */}
             <div style={{
               position: "absolute",
               top: "0.3rem",
@@ -241,7 +238,6 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
               {item.time}
             </div>
 
-            {/* Image Thumbnail */}
             <div style={{
               width: "100%",
               height: "52px",
@@ -258,7 +254,6 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
               />
             </div>
 
-            {/* Text details */}
             <div>
               <strong style={{ fontSize: "0.75rem", color: "#ffffff", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {item.title}
@@ -276,8 +271,6 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
 
       {/* Satellite/Dark Map Section */}
       <div style={{ position: "relative", flex: 1, minHeight: "320px", borderRadius: "10px", overflow: "hidden" }}>
-        
-        {/* Map Type Switcher Buttons (지도 / 위성) */}
         <div style={{
           position: "absolute",
           bottom: "1rem",
@@ -303,7 +296,7 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
               cursor: "pointer"
             }}
           >
-            지도
+            {t.map}
           </button>
           <button
             onClick={() => setMapType("satellite")}
@@ -318,11 +311,10 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit }) {
               cursor: "pointer"
             }}
           >
-            위성
+            {t.satellite}
           </button>
         </div>
 
-        {/* Leaflet Map Div */}
         <div ref={mapContainerRef} style={{ width: "100%", height: "100%", minHeight: "320px" }} />
       </div>
 

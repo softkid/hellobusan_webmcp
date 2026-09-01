@@ -1,7 +1,10 @@
 import React from "react";
 import { UserCheck, Bot, Building2 } from "lucide-react";
+import { TRANSLATIONS } from "../constants/translations.js";
 
-export default function Footer() {
+export default function Footer({ lang = "en" }) {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
   return (
     <footer style={{
       marginTop: "1rem",
@@ -17,21 +20,21 @@ export default function Footer() {
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
         <UserCheck size={16} color="#00f2fe" />
-        <strong style={{ color: "#ffffff" }}>You decide.</strong>
+        <strong style={{ color: "#ffffff" }}>{t.youDecide}</strong>
       </div>
 
       <span style={{ color: "var(--text-dim)" }}>+</span>
 
       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
         <Bot size={16} color="#9e77ed" />
-        <strong style={{ color: "#ffffff" }}>Your agent acts.</strong>
+        <strong style={{ color: "#ffffff" }}>{t.yourAgentActs}</strong>
       </div>
 
       <span style={{ color: "var(--text-dim)" }}>+</span>
 
       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
         <Building2 size={16} color="#34d399" />
-        <strong style={{ color: "#ffffff" }}>Busan responds.</strong>
+        <strong style={{ color: "#ffffff" }}>{t.busanResponds}</strong>
       </div>
     </footer>
   );

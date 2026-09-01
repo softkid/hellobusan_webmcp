@@ -1,7 +1,23 @@
 import React from "react";
-import { ShieldCheck, Cpu, Sparkles, BookOpen, User, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, Cpu, Sparkles, User, Globe } from "lucide-react";
+import { TRANSLATIONS } from "../constants/translations.js";
 
-export default function Header({ goalPrompt, setGoalPrompt, isWorking, onRunAgent, activeTab, setActiveTab }) {
+export default function Header({
+  goalPrompt,
+  setGoalPrompt,
+  isWorking,
+  onRunAgent,
+  activeTab,
+  setActiveTab,
+  lang = "en",
+  setLang
+}) {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+  const toggleLanguage = () => {
+    setLang(lang === "en" ? "ko" : "en");
+  };
+
   return (
     <header style={{ marginBottom: "1rem" }}>
       {/* Top Main Navigation Header */}
@@ -28,14 +44,14 @@ export default function Header({ goalPrompt, setGoalPrompt, isWorking, onRunAgen
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
               <h1 style={{ fontSize: "1.25rem", margin: 0, letterSpacing: "0.02em", color: "#ffffff" }}>
-                AGENTIC BUSAN
+                {t.brandTitle}
               </h1>
               <span className="badge-status badge-allow" style={{ fontSize: "0.6rem", padding: "0.1rem 0.4rem" }}>
                 WEBMCP ENABLED
               </span>
             </div>
             <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", margin: 0 }}>
-              The city is your interface.
+              {t.brandSubtitle}
             </p>
           </div>
         </div>
@@ -53,13 +69,13 @@ export default function Header({ goalPrompt, setGoalPrompt, isWorking, onRunAgen
           gap: "0.6rem"
         }}>
           <div style={{ fontSize: "0.68rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)", fontWeight: 700, flexShrink: 0 }}>
-            YOUR GOAL
+            {t.goalLabel}
           </div>
           <input
             type="text"
             value={goalPrompt}
             onChange={(e) => setGoalPrompt(e.target.value)}
-            placeholder="오늘 아이와 5만원으로 부산에서 6시간 즐길 수 있는 코스를 만들어줘."
+            placeholder={t.goalPlaceholder}
             style={{
               flex: 1,
               background: "transparent",
@@ -90,9 +106,31 @@ export default function Header({ goalPrompt, setGoalPrompt, isWorking, onRunAgen
           </button>
         </div>
 
-        {/* Right Controls: Safe Mode, Profile & Tab Switcher */}
+        {/* Right Controls: Language Switcher, Safe Mode, Profile & Tab Switcher */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
           
+          {/* i18n Language Switcher Button (EN / KO) */}
+          <button
+            onClick={toggleLanguage}
+            style={{
+              background: "rgba(0, 242, 254, 0.12)",
+              border: "1px solid rgba(0, 242, 254, 0.35)",
+              color: "#00f2fe",
+              padding: "0.35rem 0.65rem",
+              borderRadius: "8px",
+              fontSize: "0.78rem",
+              fontWeight: 700,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.35rem",
+              fontFamily: "var(--font-mono)"
+            }}
+            title="Switch Language (English / 한국어)"
+          >
+            <Globe size={14} /> {lang.toUpperCase()}
+          </button>
+
           {/* Safe Mode Badge */}
           <div style={{
             background: "rgba(16, 185, 129, 0.1)",
@@ -106,8 +144,8 @@ export default function Header({ goalPrompt, setGoalPrompt, isWorking, onRunAgen
           }}>
             <ShieldCheck size={16} color="#34d399" />
             <div>
-              <strong style={{ color: "#34d399", display: "block", lineHeight: 1 }}>Safe Mode</strong>
-              <span style={{ fontSize: "0.65rem", color: "var(--text-dim)" }}>Human in Control</span>
+              <strong style={{ color: "#34d399", display: "block", lineHeight: 1 }}>{t.safeMode}</strong>
+              <span style={{ fontSize: "0.65rem", color: "var(--text-dim)" }}>{t.humanInControl}</span>
             </div>
           </div>
 
@@ -146,7 +184,7 @@ export default function Header({ goalPrompt, setGoalPrompt, isWorking, onRunAgen
                 cursor: "pointer"
               }}
             >
-              Workspace & Map
+              {t.workspaceTab}
             </button>
             <button
               onClick={() => setActiveTab("doc")}
@@ -161,7 +199,7 @@ export default function Header({ goalPrompt, setGoalPrompt, isWorking, onRunAgen
                 cursor: "pointer"
               }}
             >
-              WebMCP Docs
+              {t.docsTab}
             </button>
             <button
               onClick={() => setActiveTab("benchmark")}
@@ -176,7 +214,7 @@ export default function Header({ goalPrompt, setGoalPrompt, isWorking, onRunAgen
                 cursor: "pointer"
               }}
             >
-              Benchmark
+              {t.benchmarkTab}
             </button>
           </div>
 

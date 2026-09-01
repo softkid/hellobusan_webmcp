@@ -1,5 +1,5 @@
 /**
- * WebMCP Tool Declarations & Permission Schemas for HelloBusan
+ * WebMCP Tool Declarations & Permission Schemas for HelloBusan (English Default)
  */
 
 export const TOOL_NAMES = {
@@ -16,23 +16,23 @@ export const TOOL_NAMES = {
 };
 
 export const DEFAULT_PERMISSIONS = {
-  [TOOL_NAMES.SEARCH_PLACES]: { policy: "ALLOW", label: "장소 검색 (Search Places)", type: "READ" },
-  [TOOL_NAMES.SEARCH_RESTAURANTS]: { policy: "ALLOW", label: "식당 검색 (Search Restaurants)", type: "READ" },
-  [TOOL_NAMES.SEARCH_EVENTS]: { policy: "ALLOW", label: "행사 검색 (Search Events)", type: "READ" },
-  [TOOL_NAMES.GET_PLACE_DETAILS]: { policy: "ALLOW", label: "장소 상세정보 (Place Details)", type: "READ" },
-  [TOOL_NAMES.CALCULATE_ROUTE]: { policy: "ALLOW", label: "경로 및 이동시간 계산 (Calculate Route)", type: "READ" },
-  [TOOL_NAMES.ESTIMATE_COST]: { policy: "ALLOW", label: "총 예산 계산 (Estimate Cost)", type: "READ" },
-  [TOOL_NAMES.GET_WEATHER]: { policy: "ALLOW", label: "부산 날씨 조회 (Get Weather)", type: "READ" },
-  [TOOL_NAMES.GET_ITINERARY]: { policy: "ALLOW", label: "일정 정보 조회 (Get Itinerary)", type: "READ" },
-  [TOOL_NAMES.UPDATE_ITINERARY]: { policy: "ALLOW", label: "일정 변경 및 작성 (Update Itinerary)", type: "WRITE" },
-  [TOOL_NAMES.REQUEST_RESERVATION]: { policy: "ASK", label: "예약 승인 요청 (Request Reservation)", type: "SENSITIVE" }
+  [TOOL_NAMES.SEARCH_PLACES]: { policy: "ALLOW", label: "Search Places", type: "READ" },
+  [TOOL_NAMES.SEARCH_RESTAURANTS]: { policy: "ALLOW", label: "Search Restaurants", type: "READ" },
+  [TOOL_NAMES.SEARCH_EVENTS]: { policy: "ALLOW", label: "Search Events", type: "READ" },
+  [TOOL_NAMES.GET_PLACE_DETAILS]: { policy: "ALLOW", label: "Place Details", type: "READ" },
+  [TOOL_NAMES.CALCULATE_ROUTE]: { policy: "ALLOW", label: "Calculate Route", type: "READ" },
+  [TOOL_NAMES.ESTIMATE_COST]: { policy: "ALLOW", label: "Estimate Cost", type: "READ" },
+  [TOOL_NAMES.GET_WEATHER]: { policy: "ALLOW", label: "Get Weather", type: "READ" },
+  [TOOL_NAMES.GET_ITINERARY]: { policy: "ALLOW", label: "Get Itinerary", type: "READ" },
+  [TOOL_NAMES.UPDATE_ITINERARY]: { policy: "ALLOW", label: "Update Itinerary", type: "WRITE" },
+  [TOOL_NAMES.REQUEST_RESERVATION]: { policy: "ASK", label: "Request Reservation", type: "SENSITIVE" }
 };
 
 export const PRESET_GOALS = [
   {
     id: "preset-1",
-    title: "🌧️ 우천 대응 6시간 아이동반 코스 (₩50,000 이하)",
-    prompt: "오늘 비가 오는데 5만원 안에서 아이와 6시간 동안 부산 센텀/해운대에서 할 일을 만들어줘.",
+    title: "🌧️ Rainy Day Family 6h Trip (Under ₩50,000)",
+    prompt: "Today it is raining. Create a 6-hour family itinerary with a kid in Centum & Haeundae under ₩50,000.",
     budget: 50000,
     duration: 360,
     requireIndoor: true,
@@ -40,8 +40,8 @@ export const PRESET_GOALS = [
   },
   {
     id: "preset-2",
-    title: "✨ 센텀-해운대 문화 & 맛집 코스 (₩80,000 이하)",
-    prompt: "센텀시티 미디어아트 전시와 돼지국밥, 해운대 아쿠아리움을 포함한 5시간 데이트 코스 짜줘.",
+    title: "✨ Culture & Gourmet Date Course (Under ₩80,000)",
+    prompt: "Plan a 5-hour couple date course with media art exhibition, pork soup lunch, and aquarium in Centum-Haeundae.",
     budget: 80000,
     duration: 300,
     requireIndoor: true,
@@ -49,8 +49,8 @@ export const PRESET_GOALS = [
   },
   {
     id: "preset-3",
-    title: "🚀 동부산 오시리아 로봇체험 & 전복죽 투어 (₩45,000 이하)",
-    prompt: "동부산 국립부산과학관 로봇공연 관람 후 전복죽을 먹는 아이 친화형 4시간 코스 구성해줘.",
+    title: "🚀 Robot Science & Abalone Feast (Under ₩45,000)",
+    prompt: "Design a 4-hour kid-friendly course visiting Busan Science Museum robot dance show and abalone porridge dining.",
     budget: 45000,
     duration: 240,
     requireIndoor: false,
@@ -60,30 +60,30 @@ export const PRESET_GOALS = [
 
 export const BENCHMARK_METRICS = {
   human: {
-    title: "Human Manual (직접 검색)",
+    title: "Human Manual (Direct Search)",
     steps: 32,
     interactions: 48,
     completionTimeSec: 285,
     errors: 4,
     successRate: "75%",
-    description: "사용자가 네이버지도, 블로그, 예약앱, 날씨앱 6개를 직접 번갈아 오가며 검색 및 동선 계산"
+    description: "User manually switches across Naver Map, blogs, booking apps, and weather apps to query and calculate transit routes."
   },
   domAgent: {
-    title: "DOM Agent (기존 웹 자동화)",
+    title: "DOM Agent (Web Automation)",
     steps: 18,
     interactions: 26,
     completionTimeSec: 54,
     errors: 3,
     successRate: "60%",
-    description: "AI가 DOM 구조와 버튼 셀렉터를 추측하여 클릭. 동적 UI 변경이나 팝업 시 클릭 실패 발생"
+    description: "AI inspects DOM buttons & selectors to click. Fragile to dynamic UI changes or popup shifts leading to execution failure."
   },
   webMcp: {
-    title: "WebMCP Agent (구조화 Tool)",
+    title: "WebMCP Agent (Structured Schema Tools)",
     steps: 8,
     interactions: 1, // Only 1 Human Approval interaction
     completionTimeSec: 8.4,
     errors: 0,
     successRate: "100%",
-    description: "브라우저가 중재하는 원자적 WebMCP Schema Tool 호출. UI 깨짐 없이 1회 승인으로 완료"
+    description: "Browser mediates atomic JSON Schema tool calls. Zero DOM-breaking errors with 1-click human approval."
   }
 };

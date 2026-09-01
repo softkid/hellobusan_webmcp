@@ -1,14 +1,17 @@
 import React from "react";
-import { Network, Plus, CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Plus } from "lucide-react";
+import { TRANSLATIONS } from "../constants/translations.js";
 
-export default function WebMcpNetwork() {
+export default function WebMcpNetwork({ lang = "en" }) {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
   const serviceCategories = [
-    { title: "음식점", subtitle: "Restaurants", count: "4 Tools", icon: "🍜" },
-    { title: "문화/전시", subtitle: "Culture", count: "3 Tools", icon: "🎭" },
-    { title: "체험", subtitle: "Experience", count: "2 Tools", icon: "🎡" },
-    { title: "교통", subtitle: "Transport", count: "2 Tools", icon: "🚇" },
-    { title: "숙소", subtitle: "Stay", count: "2 Tools", icon: "🏨" },
-    { title: "관광지", subtitle: "Attraction", count: "2 Tools", icon: "🏞️" }
+    { title: t.restaurants, count: "4 Tools", icon: "🍜" },
+    { title: t.culture, count: "3 Tools", icon: "🎭" },
+    { title: t.experience, count: "2 Tools", icon: "🎡" },
+    { title: t.transport, count: "2 Tools", icon: "🚇" },
+    { title: t.stay, count: "2 Tools", icon: "🏨" },
+    { title: t.attractions, count: "2 Tools", icon: "🏞️" }
   ];
 
   const activeTools = [
@@ -28,12 +31,12 @@ export default function WebMcpNetwork() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
         <div>
           <h2 style={{ fontSize: "0.95rem", margin: 0, color: "#ffffff", letterSpacing: "0.01em" }}>
-            WEBMCP NETWORK
+            {t.networkTitle}
           </h2>
-          <span style={{ fontSize: "0.7rem", color: "var(--text-dim)" }}>연결된 부산 웹 서비스</span>
+          <span style={{ fontSize: "0.7rem", color: "var(--text-dim)" }}>{t.networkSub}</span>
         </div>
         <span className="badge-status badge-allow" style={{ fontSize: "0.68rem" }}>
-          18 Tools
+          {t.toolsCount}
         </span>
       </div>
 
@@ -64,10 +67,10 @@ export default function WebMcpNetwork() {
       {/* Active Tools List */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
         <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 700 }}>
-          ACTIVE TOOLS <span style={{ color: "var(--text-dim)", fontWeight: 400 }}>활성화된 도구</span>
+          {t.activeTools}
         </span>
         <span style={{ fontSize: "0.68rem", color: "#34d399", fontFamily: "var(--font-mono)" }}>
-          ◆ 7/18
+          ◆ 7/18 Active
         </span>
       </div>
 
@@ -116,7 +119,7 @@ export default function WebMcpNetwork() {
           color: "#00f2fe"
         }}
       >
-        <Plus size={14} /> 새 도구 연결하기
+        <Plus size={14} /> {t.connectNewTool}
       </button>
 
     </div>

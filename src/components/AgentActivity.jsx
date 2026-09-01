@@ -1,20 +1,23 @@
 import React from "react";
-import { Activity, Clock } from "lucide-react";
+import { Activity } from "lucide-react";
+import { TRANSLATIONS } from "../constants/translations.js";
 
-export default function AgentActivity({ logs }) {
+export default function AgentActivity({ logs, lang = "en" }) {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
   const defaultLogs = [
-    { time: "14:02:11", name: "search_places", detail: "아이 동반 가능, 실내 장소 검색", badge: "12 results", color: "badge-allow" },
-    { time: "14:02:13", name: "search_restaurants", detail: "예산(5만원) 내 식당 검색", badge: "8 results", color: "badge-allow" },
-    { time: "14:02:15", name: "calculate_route", detail: "이동 시간 최적화", badge: "4 routes", color: "badge-allow" },
-    { time: "14:02:18", name: "remove_activity", detail: "예산 초과 일정 제거", badge: "3 removed", color: "badge-ask" },
-    { time: "14:02:21", name: "reserve_restaurant", detail: "예약 가능 여부 확인", badge: "승인 필요", color: "badge-deny" }
+    { time: "14:02:11", name: "search_places", detail: "Kid-friendly indoor place search", badge: "12 results", color: "badge-allow" },
+    { time: "14:02:13", name: "search_restaurants", detail: "Filter dining under ₩50,000 budget", badge: "8 results", color: "badge-allow" },
+    { time: "14:02:15", name: "calculate_route", detail: "Route time optimization", badge: "4 routes", color: "badge-allow" },
+    { time: "14:02:18", name: "remove_activity", detail: "Exceeded budget items removed", badge: "3 removed", color: "badge-ask" },
+    { time: "14:02:21", name: "reserve_restaurant", detail: "Check reservation availability", badge: t.ask, color: "badge-deny" }
   ];
 
   const activeLogs = logs && logs.length > 0 ? logs.map((l) => ({
     time: l.timestamp,
     name: l.toolName,
     detail: l.impactReason || "Tool Execution",
-    badge: l.status === "ASK_APPROVAL" ? "승인 필요" : l.status === "BLOCKED" ? "잠금" : "완료",
+    badge: l.status === "ASK_APPROVAL" ? t.ask : l.status === "BLOCKED" ? t.deny : t.allow,
     color: l.status === "ASK_APPROVAL" ? "badge-ask" : l.status === "BLOCKED" ? "badge-deny" : "badge-allow"
   })) : defaultLogs;
 
@@ -25,12 +28,12 @@ export default function AgentActivity({ logs }) {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.6rem" }}>
         <div>
           <h3 style={{ fontSize: "0.85rem", margin: 0, color: "#ffffff", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-            <Activity size={14} color="#00f2fe" /> AGENT ACTIVITY
+            <Activity size={14} color="#00f2fe" /> {t.activityTitle}
           </h3>
-          <span style={{ fontSize: "0.65rem", color: "var(--text-dim)" }}>AI 활동 로그 (실시간)</span>
+          <span style={{ fontSize: "0.65rem", color: "var(--text-dim)" }}>{t.activitySub}</span>
         </div>
         <span className="badge-status badge-allow" style={{ fontSize: "0.6rem" }}>
-          ● 실시간
+          {t.live}
         </span>
       </div>
 
@@ -74,7 +77,7 @@ export default function AgentActivity({ logs }) {
       {/* Bottom Button */}
       <div style={{ marginTop: "0.5rem", textAlign: "center" }}>
         <button style={{ background: "transparent", border: "none", color: "var(--text-dim)", fontSize: "0.7rem", cursor: "pointer" }}>
-          + 전체 로그 보기
+          {t.viewFullLog}
         </button>
       </div>
 

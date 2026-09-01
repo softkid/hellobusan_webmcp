@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import { MessageSquare, Send, Bot, User } from "lucide-react";
+import { MessageSquare, Send } from "lucide-react";
+import { TRANSLATIONS } from "../constants/translations.js";
 
-export default function AgentAssistant() {
+export default function AgentAssistant({ lang = "en" }) {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
   const [messages, setMessages] = useState([
-    { sender: "user", text: "오늘 비가 오는데 실내 위주로 부탁해." },
-    { sender: "agent", text: "실내 위주로 일정을 재구성하고 있어요. 과학관 ➔ 실내 체험 ➔ 아쿠아리움으로 변경했어요." },
-    { sender: "user", text: "저녁은 해산물로 바꿔줘." },
-    { sender: "agent", text: "해산물 맛집 3곳을 검색해 일정을 업데이트할게요." }
+    { sender: "user", text: lang === "en" ? "Please focus on indoor places due to rain today." : "오늘 비가 오는데 실내 위주로 부탁해." },
+    { sender: "agent", text: lang === "en" ? "Rebuilding itinerary for indoor priority. Science Museum -> Indoor Experience -> Aquarium updated." : "실내 위주로 일정을 재구성하고 있어요. 과학관 ➔ 실내 체험 ➔ 아쿠아리움으로 변경했어요." },
+    { sender: "user", text: lang === "en" ? "Change dinner option to seafood." : "저녁은 해산물로 바꿔줘." },
+    { sender: "agent", text: lang === "en" ? "Re-searching seafood restaurants and updating itinerary." : "해산물 맛집 3곳을 검색해 일정을 업데이트할게요." }
   ]);
 
   const [inputMsg, setInputMsg] = useState("");
@@ -20,7 +23,12 @@ export default function AgentAssistant() {
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { sender: "agent", text: `요청하신 "${userText}" 조건으로 WebMCP Tool(search_places / update_itinerary)을 재실행합니다.` }
+        {
+          sender: "agent",
+          text: lang === "en"
+            ? `Executing WebMCP tools (search_places / update_itinerary) for prompt: "${userText}".`
+            : `요청하신 "${userText}" 조건으로 WebMCP Tool을 재실행합니다.`
+        }
       ]);
     }, 600);
   };
@@ -32,9 +40,9 @@ export default function AgentAssistant() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.6rem" }}>
         <div>
           <h3 style={{ fontSize: "0.85rem", margin: 0, color: "#ffffff", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-            <MessageSquare size={14} color="#00f2fe" /> AGENT ASSISTANT
+            <MessageSquare size={14} color="#00f2fe" /> {t.assistantTitle}
           </h3>
-          <span style={{ fontSize: "0.65rem", color: "var(--text-dim)" }}>AI 어시스턴트</span>
+          <span style={{ fontSize: "0.65rem", color: "var(--text-dim)" }}>{t.assistantSub}</span>
         </div>
       </div>
 
@@ -72,7 +80,7 @@ export default function AgentAssistant() {
           value={inputMsg}
           onChange={(e) => setInputMsg(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          placeholder="메시지를 입력하세요..."
+          placeholder={t.typeMsg}
           style={{
             flex: 1,
             background: "rgba(10, 15, 26, 0.9)",

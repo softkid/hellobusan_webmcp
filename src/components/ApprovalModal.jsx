@@ -1,8 +1,10 @@
 import React from "react";
-import { AlertTriangle, ShieldCheck, Check, X, Building2, Users, Clock, DollarSign } from "lucide-react";
+import { AlertTriangle, Check, X, Building2, Users, Clock, DollarSign } from "lucide-react";
+import { TRANSLATIONS } from "../constants/translations.js";
 
-export default function ApprovalModal({ payload, onApprove, onReject }) {
+export default function ApprovalModal({ payload, onApprove, onReject, lang = "en" }) {
   if (!payload) return null;
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
 
   return (
     <div style={{
@@ -24,8 +26,7 @@ export default function ApprovalModal({ payload, onApprove, onReject }) {
           padding: "1.75rem",
           borderRadius: "18px",
           border: "1px solid rgba(255, 159, 67, 0.5)",
-          boxShadow: "0 0 35px rgba(255, 159, 67, 0.2)",
-          animation: "pulse-glow 2s infinite ease-in-out"
+          boxShadow: "0 0 35px rgba(255, 159, 67, 0.2)"
         }}
       >
         {/* Header Alert */}
@@ -44,7 +45,7 @@ export default function ApprovalModal({ payload, onApprove, onReject }) {
           </div>
           <div>
             <span className="badge badge-ask" style={{ marginBottom: "0.2rem" }}>
-              Human Approval Required (인간 승인 요청)
+              Human Approval Required
             </span>
             <h3 style={{ fontSize: "1.2rem", margin: 0, color: "#ffffff" }}>
               Agent Sensitive Action Confirmation
@@ -53,12 +54,12 @@ export default function ApprovalModal({ payload, onApprove, onReject }) {
         </div>
 
         <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "1.25rem", lineHeight: 1.5 }}>
-          Agent가 권한 지갑 정책(<strong style={{ color: "#ff9f43" }}>POLICY = ASK</strong>)에 따라 아래 민감한 예약 행동을 수행하기 전 인간 최종 결정을 요청합니다.
+          The Agent requests explicit human approval for sensitive action (<strong style={{ color: "#ff9f43" }}>POLICY = ASK</strong>) before proceeding.
         </p>
 
         {/* Detailed Reservation Card */}
         <div style={{
-          background: "rgba(10, 15, 30, 0.9)",
+          background: "rgba(10, 15, 26, 0.9)",
           border: "1px solid var(--border)",
           borderRadius: "12px",
           padding: "1rem",
@@ -73,13 +74,13 @@ export default function ApprovalModal({ payload, onApprove, onReject }) {
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", fontSize: "0.82rem", color: "var(--text-muted)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <Clock size={14} color="#ffb703" /> 시간: <strong style={{ color: "#ffffff" }}>{payload.time}</strong>
+              <Clock size={14} color="#ffb703" /> Time: <strong style={{ color: "#ffffff" }}>{payload.time}</strong>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <Users size={14} color="#ffb703" /> 인원: <strong style={{ color: "#ffffff" }}>{payload.partySize}명</strong>
+              <Users size={14} color="#ffb703" /> Guests: <strong style={{ color: "#ffffff" }}>{payload.partySize} guests</strong>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", gridColumn: "span 2" }}>
-              <DollarSign size={14} color="#34d399" /> 예상 금액: <strong style={{ color: "#34d399", fontFamily: "var(--font-mono)", fontSize: "0.95rem" }}>₩{payload.estimatedCost?.toLocaleString()}</strong>
+              <DollarSign size={14} color="#34d399" /> Est. Price: <strong style={{ color: "#34d399", fontFamily: "var(--font-mono)", fontSize: "0.95rem" }}>₩{payload.estimatedCost?.toLocaleString()}</strong>
             </div>
           </div>
 
@@ -102,7 +103,7 @@ export default function ApprovalModal({ payload, onApprove, onReject }) {
               color: "#ff6b6b"
             }}
           >
-            <X size={18} /> Reject Action (거절)
+            <X size={18} /> Reject Action
           </button>
           <button
             onClick={onApprove}
@@ -114,7 +115,7 @@ export default function ApprovalModal({ payload, onApprove, onReject }) {
               color: "#ffffff"
             }}
           >
-            <Check size={18} /> Approve & Execute (승인)
+            <Check size={18} /> Approve & Execute
           </button>
         </div>
       </div>

@@ -1,7 +1,10 @@
 import React from "react";
-import { Terminal, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { Terminal, ChevronLeft, ChevronRight } from "lucide-react";
+import { TRANSLATIONS } from "../constants/translations.js";
 
-export default function AgentBlackBox() {
+export default function AgentBlackBox({ lang = "en" }) {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
   return (
     <div className="glass-panel" style={{ padding: "0.85rem", height: "100%", display: "flex", flexDirection: "column" }}>
       
@@ -9,9 +12,9 @@ export default function AgentBlackBox() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.6rem" }}>
         <div>
           <h3 style={{ fontSize: "0.85rem", margin: 0, color: "#ffffff", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-            <Terminal size={14} color="#00f2fe" /> AGENT BLACK BOX
+            <Terminal size={14} color="#00f2fe" /> {t.blackBoxTitle}
           </h3>
-          <span style={{ fontSize: "0.65rem", color: "var(--text-dim)" }}>AI 의사결정 추적</span>
+          <span style={{ fontSize: "0.65rem", color: "var(--text-dim)" }}>{t.blackBoxSub}</span>
         </div>
         
         <div style={{ display: "flex", gap: "0.2rem" }}>
@@ -41,7 +44,7 @@ export default function AgentBlackBox() {
 
           <div>
             <span style={{ color: "var(--text-dim)", display: "block", fontSize: "0.62rem" }}>INPUT</span>
-            <strong style={{ color: "#ffffff" }}>예산 5만원, 아이 동반, 평점 4.0+, 한식/일식/양식</strong>
+            <strong style={{ color: "#ffffff" }}>Budget ₩50,000, Child Friendly, Rating 4.0+, Korean/Japanese/Western</strong>
           </div>
 
           <div>
@@ -51,29 +54,28 @@ export default function AgentBlackBox() {
 
           <div>
             <span style={{ color: "var(--text-dim)", display: "block", fontSize: "0.62rem" }}>REASON</span>
-            <span style={{ color: "var(--text-muted)" }}>아이 동반 가능 + 평점 조건 + 예산 필터 적용</span>
+            <span style={{ color: "var(--text-muted)" }}>Child friendly + high rating + budget filter applied</span>
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto" }}>
             <div>
               <span style={{ color: "var(--text-dim)", display: "block", fontSize: "0.62rem" }}>PERMISSION</span>
-              <span className="badge-status badge-allow" style={{ fontSize: "0.6rem" }}>READ (허용)</span>
+              <span className="badge-status badge-allow" style={{ fontSize: "0.6rem" }}>READ ({t.allow})</span>
             </div>
             <div>
               <span style={{ color: "var(--text-dim)", display: "block", fontSize: "0.62rem" }}>IMPACT</span>
-              <span style={{ color: "#9e77ed", fontSize: "0.65rem" }}>다음 일정 후보 생성에 사용됨</span>
+              <span style={{ color: "#9e77ed", fontSize: "0.65rem" }}>Used to generate candidate itinerary</span>
             </div>
           </div>
 
         </div>
 
-        {/* Right Side: Mini Map Placeholder Preview */}
+        {/* Right Side: Mini Map Preview */}
         <div style={{ background: "#080c16", border: "1px solid var(--border)", borderRadius: "6px", overflow: "hidden", position: "relative" }}>
           <div style={{ position: "absolute", top: "0.3rem", left: "0.3rem", fontSize: "0.6rem", color: "var(--text-dim)", zIndex: 2 }}>
-            선택된 결과 위치
+            {t.selectedLocation}
           </div>
 
-          {/* Styled Dark Mini Map Simulation */}
           <div style={{
             width: "100%", height: "100%",
             backgroundImage: "radial-gradient(#1e293b 1px, transparent 1px)",

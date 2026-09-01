@@ -1,16 +1,19 @@
 import React from "react";
 import { Shield, Lock, AlertTriangle, CheckCircle, Search, Scale, MapPin, Calendar, Ticket, Bell, CreditCard, UserCheck } from "lucide-react";
+import { TRANSLATIONS } from "../constants/translations.js";
 
-export default function AgentWallet({ permissions, setPermissions, budgetLimit, setBudgetLimit }) {
+export default function AgentWallet({ permissions, setPermissions, budgetLimit, setBudgetLimit, lang = "en" }) {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
   const permissionItems = [
-    { key: "search_places", label: "검색 (Search)", icon: Search, defaultPolicy: "ALLOW" },
-    { key: "compare", label: "비교 (Compare)", icon: Scale, defaultPolicy: "ALLOW" },
-    { key: "calculate_route", label: "경로 계산 (Route)", icon: MapPin, defaultPolicy: "ALLOW" },
-    { key: "update_itinerary", label: "일정 수정 (Schedule)", icon: Calendar, defaultPolicy: "ALLOW" },
-    { key: "check_availability", label: "예약 가능 확인 (Check)", icon: Ticket, defaultPolicy: "ALLOW" },
-    { key: "request_reservation", label: "예약 (Reservation)", icon: Bell, defaultPolicy: "ASK" },
-    { key: "payment", label: "결제 (Payment)", icon: CreditCard, defaultPolicy: "DENY" },
-    { key: "profile", label: "개인정보 사용 (Profile)", icon: UserCheck, defaultPolicy: "DENY" }
+    { key: "search_places", label: t.search, icon: Search, defaultPolicy: "ALLOW" },
+    { key: "compare", label: t.compare, icon: Scale, defaultPolicy: "ALLOW" },
+    { key: "calculate_route", label: t.route, icon: MapPin, defaultPolicy: "ALLOW" },
+    { key: "update_itinerary", label: t.schedule, icon: Calendar, defaultPolicy: "ALLOW" },
+    { key: "check_availability", label: t.check, icon: Ticket, defaultPolicy: "ALLOW" },
+    { key: "request_reservation", label: t.reservation, icon: Bell, defaultPolicy: "ASK" },
+    { key: "payment", label: t.payment, icon: CreditCard, defaultPolicy: "DENY" },
+    { key: "profile", label: t.profile, icon: UserCheck, defaultPolicy: "DENY" }
   ];
 
   const togglePolicy = (key) => {
@@ -38,12 +41,12 @@ export default function AgentWallet({ permissions, setPermissions, budgetLimit, 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
         <div>
           <h2 style={{ fontSize: "0.95rem", margin: 0, letterSpacing: "0.02em", color: "#ffffff" }}>
-            AGENT WALLET
+            {t.walletTitle}
           </h2>
-          <span style={{ fontSize: "0.7rem", color: "var(--text-dim)" }}>AI 권한 지갑</span>
+          <span style={{ fontSize: "0.7rem", color: "var(--text-dim)" }}>{t.walletSub}</span>
         </div>
         <button className="btn-secondary" style={{ padding: "0.25rem 0.55rem", fontSize: "0.7rem" }}>
-          Edit
+          {t.edit}
         </button>
       </div>
 
@@ -60,10 +63,10 @@ export default function AgentWallet({ permissions, setPermissions, budgetLimit, 
       }}>
         <div>
           <strong style={{ fontSize: "0.9rem", color: "#00f2fe", display: "block" }}>
-            You stay in control.
+            {t.youStayInControl}
           </strong>
           <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-            AI가 사용할 수 있는 권한을 직접 설정하세요.
+            {t.youStaySub}
           </span>
         </div>
         <div style={{
@@ -82,7 +85,7 @@ export default function AgentWallet({ permissions, setPermissions, budgetLimit, 
 
       {/* Permissions List */}
       <div style={{ fontSize: "0.7rem", color: "var(--text-dim)", marginBottom: "0.4rem", fontWeight: 700 }}>
-        AI PERMISSIONS <span style={{ float: "right" }}>권한 설정</span>
+        {t.aiPermissions} <span style={{ float: "right" }}>{t.permSetting}</span>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", flex: 1, overflowY: "auto", paddingRight: "0.2rem" }}>
@@ -114,17 +117,17 @@ export default function AgentWallet({ permissions, setPermissions, budgetLimit, 
 
               {currentPolicy === "ALLOW" && (
                 <span className="badge-status badge-allow">
-                  <CheckCircle size={10} /> 허용
+                  <CheckCircle size={10} /> {t.allow}
                 </span>
               )}
               {currentPolicy === "ASK" && (
                 <span className="badge-status badge-ask">
-                  <AlertTriangle size={10} /> 승인 필요
+                  <AlertTriangle size={10} /> {t.ask}
                 </span>
               )}
               {currentPolicy === "DENY" && (
                 <span className="badge-status badge-deny">
-                  <Lock size={10} /> 잠금
+                  <Lock size={10} /> {t.deny}
                 </span>
               )}
             </div>
@@ -140,7 +143,7 @@ export default function AgentWallet({ permissions, setPermissions, budgetLimit, 
         fontSize: "0.75rem"
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.3rem" }}>
-          <span style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>DAILY LIMIT (일일 사용 한도)</span>
+          <span style={{ color: "var(--text-muted)", fontSize: "0.7rem" }}>{t.dailyLimit}</span>
           <strong style={{ color: "#34d399", fontFamily: "var(--font-mono)" }}>
             ₩{budgetLimit.toLocaleString()} <span style={{ color: "var(--text-dim)", fontWeight: 400 }}>/ ₩50,000</span>
           </strong>

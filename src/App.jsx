@@ -21,8 +21,9 @@ import { DEFAULT_PERMISSIONS, PRESET_GOALS, TOOL_NAMES } from "./constants/webmc
 import { BUSAN_PLACES, BUSAN_RESTAURANTS, BUSAN_EVENTS, BUSAN_WEATHER } from "./data/mockBusanData.js";
 
 export default function App() {
+  const [lang, setLang] = useState("en"); // "en" (default) | "ko"
   const [activeTab, setActiveTab] = useState("workspace"); // workspace | doc | benchmark
-  const [goalPrompt, setGoalPrompt] = useState("오늘 아이와 5만원으로 부산에서 6시간 즐길 수 있는 코스를 만들어줘.");
+  const [goalPrompt, setGoalPrompt] = useState("Today, make a 6-hour Busan trip for family with a kid under ₩50,000.");
   const [permissions, setPermissions] = useState(DEFAULT_PERMISSIONS);
   const [budgetLimit, setBudgetLimit] = useState(50000);
 
@@ -81,7 +82,7 @@ export default function App() {
         durationMinutes: 12,
         mode: "Subway / Indoor Transit",
         transitFee: 2800,
-        rainSafetyNotice: "도보 2분 이내 지하 연결 통로 이용"
+        rainSafetyNotice: "Underground walkway connection within 2 min walk"
       };
     },
 
@@ -155,7 +156,7 @@ export default function App() {
 
   // Reset Demo
   const handleReset = () => {
-    setGoalPrompt("오늘 아이와 5만원으로 부산에서 6시간 즐길 수 있는 코스를 만들어줘.");
+    setGoalPrompt(lang === "en" ? "Today, make a 6-hour Busan trip for family with a kid under ₩50,000." : "오늘 아이와 5만원으로 부산에서 6시간 즐길 수 있는 코스를 만들어줘.");
     setItinerary([]);
     setBlackBoxLogs([]);
     setPermissions(DEFAULT_PERMISSIONS);
@@ -168,7 +169,7 @@ export default function App() {
   return (
     <div style={{ maxWidth: "1600px", margin: "0 auto", padding: "1rem 1.25rem", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       
-      {/* Top Header Bar */}
+      {/* Top Header Bar with i18n Switcher */}
       <Header
         goalPrompt={goalPrompt}
         setGoalPrompt={setGoalPrompt}
@@ -176,13 +177,15 @@ export default function App() {
         onRunAgent={handleRunAgent}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        lang={lang}
+        setLang={setLang}
       />
 
       {/* Main Tab Views */}
       {activeTab === "benchmark" ? (
-        <WebMCPBenchmark />
+        <WebMCPBenchmark lang={lang} />
       ) : activeTab === "doc" ? (
-        <WebMCPDoc toolHandlers={toolHandlers} />
+        <WebMCPDoc toolHandlers={toolHandlers} lang={lang} />
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", flex: 1 }}>
           
@@ -195,6 +198,7 @@ export default function App() {
               setPermissions={setPermissions}
               budgetLimit={budgetLimit}
               setBudgetLimit={setBudgetLimit}
+              lang={lang}
             />
 
             {/* Center Panel: AI Plan & Interactive Map */}
@@ -202,10 +206,11 @@ export default function App() {
               itinerary={itinerary}
               totalCost={totalCost}
               dailyBudgetLimit={budgetLimit}
+              lang={lang}
             />
 
             {/* Right Panel: WebMCP Network */}
-            <WebMcpNetwork />
+            <WebMcpNetwork lang={lang} />
 
           </div>
 
@@ -213,21 +218,21 @@ export default function App() {
           <div style={{ display: "grid", gridTemplateColumns: "260px 1.4fr 1.3fr 260px", gap: "1rem", height: "240px" }}>
             
             {/* Panel 1: Agent Activity */}
-            <AgentActivity logs={blackBoxLogs} />
+            <AgentActivity logs={blackBoxLogs} lang={lang} />
 
             {/* Panel 2: Agent Black Box */}
-            <AgentBlackBox />
+            <AgentBlackBox lang={lang} />
 
             {/* Panel 3: WebMCP Evaluation */}
-            <WebMcpEvaluation />
+            <WebMcpEvaluation lang={lang} />
 
             {/* Panel 4: Agent Assistant */}
-            <AgentAssistant />
+            <AgentAssistant lang={lang} />
 
           </div>
 
           {/* Footer Tagline */}
-          <Footer />
+          <Footer lang={lang} />
 
         </div>
       )}
@@ -237,6 +242,7 @@ export default function App() {
         payload={approvalModalPayload}
         onApprove={handleApprove}
         onReject={handleReject}
+        lang={lang}
       />
     </div>
   );
