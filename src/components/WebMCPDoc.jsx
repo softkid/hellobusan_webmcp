@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { BookOpen, Code2, Play, CheckCircle2, ShieldAlert, Cpu, Terminal, ArrowRight, Layers, FileCode } from "lucide-react";
-import { TOOL_NAMES, DEFAULT_PERMISSIONS } from "../constants/webmcpConfig.js";
+import { BookOpen, Play, CheckCircle2, Terminal, Layers, FileCode } from "lucide-react";
+import { TOOL_NAMES } from "../constants/webmcpConfig.js";
 
 export default function WebMCPDoc({ toolHandlers }) {
   const [selectedTool, setSelectedTool] = useState(TOOL_NAMES.SEARCH_PLACES);
@@ -10,7 +10,7 @@ export default function WebMCPDoc({ toolHandlers }) {
   const toolSpecs = {
     [TOOL_NAMES.SEARCH_PLACES]: {
       name: TOOL_NAMES.SEARCH_PLACES,
-      label: "search_places (장소 및 관광지 검색)",
+      label: "search_places (Places & Attractions Search)",
       type: "READ",
       policy: "ALLOW",
       description: "Searches Busan indoor places, aquariums, science museums, and galleries filtered by district, budget, and child-friendliness.",
@@ -42,7 +42,7 @@ export default function WebMCPDoc({ toolHandlers }) {
 
     [TOOL_NAMES.SEARCH_RESTAURANTS]: {
       name: TOOL_NAMES.SEARCH_RESTAURANTS,
-      label: "search_restaurants (부산 대표 맛집 검색)",
+      label: "search_restaurants (Dining & Restaurant Search)",
       type: "READ",
       policy: "ALLOW",
       description: "Queries Busan restaurants with cuisine type, average meal cost, and child menu options.",
@@ -72,7 +72,7 @@ export default function WebMCPDoc({ toolHandlers }) {
 
     [TOOL_NAMES.SEARCH_EVENTS]: {
       name: TOOL_NAMES.SEARCH_EVENTS,
-      label: "search_events (문화행사 및 전시 검색)",
+      label: "search_events (Events & Culture Search)",
       type: "READ",
       policy: "ALLOW",
       description: "Search cultural exhibitions, media facade shows, and robot dance events in Busan.",
@@ -97,7 +97,7 @@ export default function WebMCPDoc({ toolHandlers }) {
 
     [TOOL_NAMES.GET_PLACE_DETAILS]: {
       name: TOOL_NAMES.GET_PLACE_DETAILS,
-      label: "get_place_details (장소 상세정보 조회)",
+      label: "get_place_details (Place Details Inquiry)",
       type: "READ",
       policy: "ALLOW",
       description: "Returns precise GPS coordinates, operating hours, and tags for a specific venue ID.",
@@ -123,7 +123,7 @@ export default function WebMCPDoc({ toolHandlers }) {
 
     [TOOL_NAMES.CALCULATE_ROUTE]: {
       name: TOOL_NAMES.CALCULATE_ROUTE,
-      label: "calculate_route (이동 경로 및 소요시간 계산)",
+      label: "calculate_route (Route & Transit Calculation)",
       type: "READ",
       policy: "ALLOW",
       description: "Computes subway/taxi transit duration, walking distance, and rainy day safety route.",
@@ -153,7 +153,7 @@ export default function WebMCPDoc({ toolHandlers }) {
 
     [TOOL_NAMES.ESTIMATE_COST]: {
       name: TOOL_NAMES.ESTIMATE_COST,
-      label: "estimate_cost (누적 예상 예산 산출)",
+      label: "estimate_cost (Budget & Cost Estimation)",
       type: "READ",
       policy: "ALLOW",
       description: "Calculates total cost for selected activities, dining, and transit against daily budget limits.",
@@ -164,7 +164,7 @@ export default function WebMCPDoc({ toolHandlers }) {
         },
         required: ["items"]
       },
-      sampleInput: { items: [{ name: "아쿠아리움", price: 21000 }, { name: "돼지국밥", price: 10000 }, { name: "지하철", price: 2800 }] },
+      sampleInput: { items: [{ name: "Aquarium", price: 21000 }, { name: "Pork Soup", price: 10000 }, { name: "Subway", price: 2800 }] },
       codeSnippet: `useWebMCP({
   name: "estimate_cost",
   description: "Estimate total budget",
@@ -179,7 +179,7 @@ export default function WebMCPDoc({ toolHandlers }) {
 
     [TOOL_NAMES.GET_WEATHER]: {
       name: TOOL_NAMES.GET_WEATHER,
-      label: "get_weather (부산 날씨 및 우천 정보)",
+      label: "get_weather (Busan Weather Inquiry)",
       type: "READ",
       policy: "ALLOW",
       description: "Returns live Busan weather condition, temperature, and rainy day recommendations.",
@@ -195,7 +195,7 @@ export default function WebMCPDoc({ toolHandlers }) {
 
     [TOOL_NAMES.GET_ITINERARY]: {
       name: TOOL_NAMES.GET_ITINERARY,
-      label: "get_itinerary (현재 작성된 일정 조회)",
+      label: "get_itinerary (Active Itinerary Query)",
       type: "READ",
       policy: "ALLOW",
       description: "Returns current active 6-hour itinerary sequence.",
@@ -211,7 +211,7 @@ export default function WebMCPDoc({ toolHandlers }) {
 
     [TOOL_NAMES.UPDATE_ITINERARY]: {
       name: TOOL_NAMES.UPDATE_ITINERARY,
-      label: "update_itinerary (6시간 일정 작성 및 업데이트)",
+      label: "update_itinerary (Update 6h Itinerary Timeline)",
       type: "WRITE",
       policy: "ALLOW",
       description: "Replaces or updates the active 6-hour itinerary timeline items.",
@@ -222,7 +222,7 @@ export default function WebMCPDoc({ toolHandlers }) {
         },
         required: ["items"]
       },
-      sampleInput: { items: [{ time: "11:30", title: "점심 국밥", cost: 10000 }, { time: "13:00", title: "아쿠아리움", cost: 21000 }] },
+      sampleInput: { items: [{ time: "11:30", title: "Lunch Pork Soup", cost: 10000 }, { time: "13:00", title: "Aquarium Visit", cost: 21000 }] },
       codeSnippet: `useWebMCP({
   name: "update_itinerary",
   description: "Update itinerary timeline",
@@ -237,7 +237,7 @@ export default function WebMCPDoc({ toolHandlers }) {
 
     [TOOL_NAMES.REQUEST_RESERVATION]: {
       name: TOOL_NAMES.REQUEST_RESERVATION,
-      label: "request_reservation (예약 승인 요청 - 민감 행동)",
+      label: "request_reservation (Request Reservation - Sensitive Action)",
       type: "SENSITIVE",
       policy: "ASK",
       description: "Requests venue or restaurant reservation. Triggers mandatory Human Approval modal before execution.",
@@ -251,7 +251,7 @@ export default function WebMCPDoc({ toolHandlers }) {
         },
         required: ["targetName", "time", "partySize"]
       },
-      sampleInput: { targetName: "오션뷰 뷔페 & 아쿠아 레스토랑", time: "17:30", partySize: 2, estimatedCost: 48000 },
+      sampleInput: { targetName: "Ocean View Buffet & Aqua Restaurant", time: "17:30", partySize: 2, estimatedCost: 48000 },
       codeSnippet: `useWebMCP({
   name: "request_reservation",
   description: "Request reservation with Human Approval",
@@ -321,7 +321,7 @@ export default function WebMCPDoc({ toolHandlers }) {
           </span>
         </div>
         <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", margin: 0, lineHeight: 1.5 }}>
-          HelloBusan 서비스가 브라우저 WebMCP 프로토콜을 통해 AI Agent에게 개방하는 <strong>10개 명시적 Tool API 스키마</strong>와 <strong>인간 권한 지갑 통제 규격</strong> 기술 문서입니다.
+          Technical specification of the <strong>10 explicit WebMCP Tool API Schemas</strong> and <strong>Agent Permission Governance Wallet</strong> exposed by HelloBusan to browser AI agents.
         </p>
       </div>
 

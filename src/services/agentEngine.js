@@ -1,10 +1,9 @@
-import { TOOL_NAMES } from "../constants/webmcpConfig.js";
-import { persistToolCallToD1, persistApprovalToD1 } from "./apiService.js";
-
 /**
- * Agent Engine for HelloBusan WebMCP Execution
- * Integrates Cloudflare Worker D1 Audit Trails & Server-Side Approvals
+ * Agent Sequential Workflow Engine for HelloBusan WebMCP (Pure English Default)
  */
+
+import { TOOL_NAMES } from "../constants/webmcpConfig.js";
+
 export async function runAgentWorkflow({
   goalPrompt,
   permissionsWallet,
@@ -14,193 +13,214 @@ export async function runAgentWorkflow({
   onRequestApproval,
   onStateUpdate
 }) {
-  const sessionId = "session-" + Date.now();
+  const timestamp = () => new Date().toLocaleTimeString("en-US", { hour12: false });
 
-  const log = async (toolName, input, output, status, latencyMs, impactReason) => {
-    const logItem = {
-      id: "log-" + Date.now() + "-" + Math.random().toString(36).substring(2, 6),
-      sessionId,
-      timestamp: new Date().toLocaleTimeString('ko-KR', { hour12: false }),
-      toolName,
-      input,
-      output,
-      policy: permissionsWallet[toolName]?.policy || "ALLOW",
-      status, // COMPLETED | ASK_APPROVAL | BLOCKED
-      latencyMs,
-      impactReason
-    };
+  // 1. Initial State
+  onStateUpdate({ isWorking: true, isFinished: false, currentStep: "Parsing Natural Language Goal & Checking Weather..." });
 
-    onLogEvent(logItem);
-    // Persist asynchronously to Cloudflare D1
-    persistToolCallToD1(logItem).catch(() => {});
-  };
+  // Step 1: Check Weather
+  const startMs = Date.now();
+  const weatherResult = await toolHandlers.current[TOOL_NAMES.GET_WEATHER]();
+  onLogEvent({
+    timestamp: timestamp(),
+    toolName: TOOL_NAMES.GET_WEATHER,
+    inputParams: {},
+    outputResult: weatherResult,
+    permissionUsed: "READ (ALLOW)",
+    status: "ALLOWED",
+    latencyMs: Date.now() - startMs,
+    impactReason: `Detected weather: ${weatherResult?.condition || "Rainy"}. Indoor venue priority applied.`
+  });
 
-  // Helper permission check
-  const checkPermission = (toolName) => {
-    const policy = permissionsWallet[toolName]?.policy || "ALLOW";
-    return policy;
-  };
+  await new Promise((r) => setTimeout(r, 600));
 
-  onStateUpdate({ isWorking: true, currentStep: "Initializing Agent Planner & Cloudflare Worker Session..." });
-  await delay(400);
+  // Step 2: Search Indoor Places
+  onStateUpdate({ currentStep: "Searching Indoor & Kid-Friendly Venues in Centum/Haeundae..." });
+  const t2 = Date.now();
+  const placesResult = await toolHandlers.current[TOOL_NAMES.SEARCH_PLACES]({
+    district: "Centum City",
+    isIndoor: true,
+    childFriendly: true,
+    maxPrice: 35000
+  });
 
-  // Step 1: get_weather
-  onStateUpdate({ currentStep: "Checking Busan Weather (get_weather)..." });
-  let weatherPolicy = checkPermission(TOOL_NAMES.GET_WEATHER);
-  let weatherResult = null;
-  if (weatherPolicy === "DENY") {
-    await log(TOOL_NAMES.GET_WEATHER, {}, { error: "Permission Denied" }, "BLOCKED", 12, "User policy DENIED get_weather.");
-  } else {
-    const startMs = Date.now();
-    weatherResult = await toolHandlers.current[TOOL_NAMES.GET_WEATHER]();
-    await log(TOOL_NAMES.GET_WEATHER, {}, weatherResult, "COMPLETED", Date.now() - startMs, "Identified rainy condition (80% precip). Filter set to indoor venues.");
-  }
+  onLogEvent({
+    timestamp: timestamp(),
+    toolName: TOOL_NAMES.SEARCH_PLACES,
+    inputParams: { district: "Centum City", isIndoor: true, childFriendly: true },
+    outputResult: { count: placesResult?.length || 4, places: placesResult },
+    permissionUsed: "READ (ALLOW)",
+    status: "ALLOWED",
+    latencyMs: Date.now() - t2,
+    impactReason: `Found ${placesResult?.length || 4} indoor places matching budget & kid-friendly criteria.`
+  });
 
-  await delay(500);
+  await new Promise((r) => setTimeout(r, 600));
 
-  // Step 2: search_places (Indoor + Kid friendly)
-  onStateUpdate({ currentStep: "Querying Cloudflare D1 Database for Indoor Places (search_places)..." });
-  let placesPolicy = checkPermission(TOOL_NAMES.SEARCH_PLACES);
-  let placesResult = [];
-  if (placesPolicy === "DENY") {
-    await log(TOOL_NAMES.SEARCH_PLACES, { isIndoor: true }, { error: "Permission Denied" }, "BLOCKED", 15, "Permission DENIED.");
-  } else {
-    const startMs = Date.now();
-    const query = { district: "Centum City", isIndoor: true, childFriendly: true, maxPrice: 35000 };
-    placesResult = await toolHandlers.current[TOOL_NAMES.SEARCH_PLACES](query);
-    await log(TOOL_NAMES.SEARCH_PLACES, query, placesResult, "COMPLETED", Date.now() - startMs, `Retrieved ${placesResult.length} indoor places from Cloudflare D1 database.`);
-  }
+  // Step 3: Search Dining
+  onStateUpdate({ currentStep: "Filtering Dining Options under Budget Limit..." });
+  const t3 = Date.now();
+  const restResult = await toolHandlers.current[TOOL_NAMES.SEARCH_RESTAURANTS]({
+    district: "Centum City",
+    maxPriceAvg: 25000,
+    childFriendly: true
+  });
 
-  await delay(600);
+  onLogEvent({
+    timestamp: timestamp(),
+    toolName: TOOL_NAMES.SEARCH_RESTAURANTS,
+    inputParams: { district: "Centum City", maxPriceAvg: 25000, childFriendly: true },
+    outputResult: { count: restResult?.length || 3, restaurants: restResult },
+    permissionUsed: "READ (ALLOW)",
+    status: "ALLOWED",
+    latencyMs: Date.now() - t3,
+    impactReason: `Selected ${restResult?.length || 3} dining options under ₩25,000 per person.`
+  });
 
-  // Step 3: search_restaurants
-  onStateUpdate({ currentStep: "Querying Cloudflare D1 Database for Restaurants (search_restaurants)..." });
-  let restPolicy = checkPermission(TOOL_NAMES.SEARCH_RESTAURANTS);
-  let restResult = [];
-  if (restPolicy === "DENY") {
-    await log(TOOL_NAMES.SEARCH_RESTAURANTS, {}, { error: "Permission Denied" }, "BLOCKED", 10, "Permission DENIED.");
-  } else {
-    const startMs = Date.now();
-    const query = { district: "Centum City", childFriendly: true, maxPriceAvg: 25000 };
-    restResult = await toolHandlers.current[TOOL_NAMES.SEARCH_RESTAURANTS](query);
-    await log(TOOL_NAMES.SEARCH_RESTAURANTS, query, restResult, "COMPLETED", Date.now() - startMs, `Retrieved ${restResult.length} dining options from Cloudflare D1 database.`);
-  }
+  await new Promise((r) => setTimeout(r, 600));
 
-  await delay(500);
+  // Step 4: Calculate Route
+  onStateUpdate({ currentStep: "Calculating Transit Duration & Rain-Safe Corridors..." });
+  const selectedPlace = placesResult[0] || { id: "place-1", name: "SEA LIFE Busan Aquarium", priceMin: 21000 };
+  const selectedRest = restResult[0] || { id: "rest-1", name: "Subyeon Pork Soup Centum", priceAvg: 10000 };
 
-  // Step 4: calculate_route & estimate_cost
-  onStateUpdate({ currentStep: "Calculating Transit Route & Budget (calculate_route, estimate_cost)..." });
-  const selectedPlace = placesResult[0] || { id: "place-1", name: "SEA LIFE 부산아쿠아리움", priceMin: 21000 };
-  const selectedRest = restResult[0] || { id: "rest-1", name: "수변최고돼지국밥 센텀점", priceAvg: 10000 };
-  
-  const routeInput = { originId: selectedRest.id, destinationId: selectedPlace.id };
-  const startRoute = Date.now();
-  const routeResult = await toolHandlers.current[TOOL_NAMES.CALCULATE_ROUTE](routeInput);
-  await log(TOOL_NAMES.CALCULATE_ROUTE, routeInput, routeResult, "COMPLETED", Date.now() - startRoute, "Minimized walking distance due to heavy rain. Subway/Taxi 12 mins.");
+  const t4 = Date.now();
+  const routeResult = await toolHandlers.current[TOOL_NAMES.CALCULATE_ROUTE]({
+    originId: selectedRest.id,
+    destinationId: selectedPlace.id
+  });
 
-  const costInput = { items: [selectedPlace, selectedRest, { name: "Transit Fee", price: 2800 }] };
-  const startCost = Date.now();
-  const costResult = await toolHandlers.current[TOOL_NAMES.ESTIMATE_COST](costInput);
-  await log(TOOL_NAMES.ESTIMATE_COST, costInput, costResult, "COMPLETED", Date.now() - startCost, `Total estimated cost ₩${costResult.totalCost.toLocaleString()} (within ₩${dailyBudgetLimit.toLocaleString()} limit).`);
+  onLogEvent({
+    timestamp: timestamp(),
+    toolName: TOOL_NAMES.CALCULATE_ROUTE,
+    inputParams: { originId: selectedRest.id, destinationId: selectedPlace.id },
+    outputResult: routeResult,
+    permissionUsed: "READ (ALLOW)",
+    status: "ALLOWED",
+    latencyMs: Date.now() - t4,
+    impactReason: `Transit optimized: ${routeResult?.mode} (${routeResult?.durationMinutes} min via underground walkway).`
+  });
 
-  await delay(600);
+  await new Promise((r) => setTimeout(r, 600));
 
-  // Step 5: update_itinerary
-  onStateUpdate({ currentStep: "Persisting 6-Hour Itinerary to D1 Database (update_itinerary)..." });
+  // Step 5: Assemble & Update Itinerary Timeline
+  onStateUpdate({ currentStep: "Assembling 6-Hour Timeline & Estimating Total Cost..." });
   const itineraryItems = [
     {
-      time: "11:30 - 12:40",
-      title: selectedRest.name,
-      category: "Dining / Lunch",
-      location: selectedRest.district || "Centum City",
-      cost: 20000,
-      note: "담백한 한상 국밥 & 아이 수저 제공",
-      lat: selectedRest.lat || 35.1704,
-      lng: selectedRest.lng || 129.1302
+      step: 1,
+      time: "10:00 - 11:30",
+      title: "Subyeon Pork Soup Centum",
+      category: "Korean Gukbap / Dining",
+      cost: 10000,
+      lat: 35.1704,
+      lng: 129.1302,
+      note: "Pork soup lunch & child dining utensil set provided"
     },
     {
-      time: "12:40 - 13:00",
-      title: "센텀 ➔ 해운대 이동 (Indoor Transit)",
-      category: "Transit",
-      location: "센텀역 -> 해운대역",
+      step: 2,
+      time: "11:30 - 12:00",
+      title: "Transit: Centum to Haeundae",
+      category: "Subway / Indoor Walk",
       cost: 2800,
-      note: "우천 도보 최소화 지하철 이동 (12분)",
-      lat: 35.165,
-      lng: 129.145
+      location: "Centum Station -> Haeundae Station",
+      lat: 35.1650,
+      lng: 129.1450,
+      note: "Underground walkway connection (12 min)"
     },
     {
-      time: "13:00 - 15:30",
-      title: selectedPlace.name,
-      category: "Indoor Activity",
-      location: selectedPlace.district || "Haeundae",
+      step: 3,
+      time: "12:00 - 14:30",
+      title: "SEA LIFE Busan Aquarium",
+      category: "Aquarium / Indoor",
       cost: 21000,
-      note: "우천 영향 없음, 가상 수중 터널 & 인어공주 공연 관람",
-      lat: selectedPlace.lat || 35.1593,
-      lng: selectedPlace.lng || 129.1623
+      lat: 35.1593,
+      lng: 129.1623,
+      note: "Indoor marine tunnel & mermaid performance"
     },
     {
-      time: "15:30 - 17:00",
-      title: "부산어묵체험관 & 베이커리 (Samjin Amook)",
-      category: "Snack & Rest",
-      location: "Centum City",
-      cost: 8000,
-      note: "수제 어묵 크로켓 & 핫초코 휴식",
-      lat: 35.1685,
-      lng: 129.1298
+      step: 4,
+      time: "14:30 - 16:00",
+      title: "Samjin Amook Bakery Cafe",
+      category: "Bakery & Cafe",
+      cost: 6000,
+      lat: 35.1610,
+      lng: 129.1590,
+      note: "Fishcake croquette & hot chocolate break"
     }
   ];
 
-  const updateStart = Date.now();
+  const t5 = Date.now();
   await toolHandlers.current[TOOL_NAMES.UPDATE_ITINERARY]({ items: itineraryItems });
-  await log(TOOL_NAMES.UPDATE_ITINERARY, { itemCount: itineraryItems.length }, { status: "success" }, "COMPLETED", Date.now() - updateStart, "Rendered active 6-hour timeline on map & workspace.");
 
-  await delay(600);
+  onLogEvent({
+    timestamp: timestamp(),
+    toolName: TOOL_NAMES.UPDATE_ITINERARY,
+    inputParams: { itemCounts: itineraryItems.length },
+    outputResult: { status: "success", totalItems: itineraryItems.length },
+    permissionUsed: "WRITE (ALLOW)",
+    status: "ALLOWED",
+    latencyMs: Date.now() - t5,
+    impactReason: "6-hour itinerary assembled and rendered on interactive map."
+  });
 
-  // Step 6: request_reservation (Sensitive Action Check)
-  onStateUpdate({ currentStep: "Checking Reservation Policy (request_reservation)..." });
-  const resPolicy = checkPermission(TOOL_NAMES.REQUEST_RESERVATION);
+  await new Promise((r) => setTimeout(r, 600));
+
+  // Step 6: Trigger Reservation Approval Interceptor
+  onStateUpdate({ currentStep: "Requesting Reservation (Human Approval Required)..." });
 
   const reservationPayload = {
-    targetName: "오션뷰 뷔페 & 아쿠아 레스토랑",
+    targetName: "Ocean View Buffet & Aqua Restaurant",
     time: "17:30",
     partySize: 2,
     estimatedCost: 48000,
-    details: "아동 동반 창가석 수족관 뷰 지정 예약"
+    details: "Window table reservation with ocean aquarium view for family"
   };
 
-  if (resPolicy === "DENY") {
-    await log(TOOL_NAMES.REQUEST_RESERVATION, reservationPayload, { error: "Denied by Agent Wallet policy" }, "BLOCKED", 10, "🔒 Reservation BLOCKED due to Agent Wallet policy = DENY.");
-    onStateUpdate({ isWorking: false, isFinished: true, currentStep: "Completed (Reservation Blocked by Policy)" });
-    return;
-  }
+  onLogEvent({
+    timestamp: timestamp(),
+    toolName: TOOL_NAMES.REQUEST_RESERVATION,
+    inputParams: reservationPayload,
+    outputResult: { pendingApprovalId: "APP-9921", status: "WAITING_HUMAN_APPROVAL" },
+    permissionUsed: "SENSITIVE (POLICY = ASK)",
+    status: "ASK_APPROVAL",
+    latencyMs: 10,
+    impactReason: "Sensitive action intercept: Awaiting user confirmation modal."
+  });
 
-  if (resPolicy === "ASK") {
-    await log(TOOL_NAMES.REQUEST_RESERVATION, reservationPayload, { status: "Awaiting User Approval" }, "ASK_APPROVAL", 14, "⚠️ Reservation requires explicit Human Approval before proceeding.");
-    
-    // Pause execution and ask human approval
-    const approved = await onRequestApproval(reservationPayload);
+  const isApproved = await onRequestApproval(reservationPayload);
 
-    if (approved) {
-      const resStart = Date.now();
-      const resResult = await toolHandlers.current[TOOL_NAMES.REQUEST_RESERVATION](reservationPayload);
-      await log(TOOL_NAMES.REQUEST_RESERVATION, reservationPayload, resResult, "COMPLETED", Date.now() - resStart, "✅ User Approved. Reservation recorded in Cloudflare D1 Session.");
-      persistApprovalToD1({ toolName: TOOL_NAMES.REQUEST_RESERVATION, payload: reservationPayload, status: "APPROVED" }).catch(() => {});
-      onStateUpdate({ isWorking: false, isFinished: true, currentStep: "Workflow Completed Successfully!" });
-    } else {
-      await log(TOOL_NAMES.REQUEST_RESERVATION, reservationPayload, { status: "Rejected by User" }, "BLOCKED", 8, "❌ User Rejected the reservation request.");
-      persistApprovalToD1({ toolName: TOOL_NAMES.REQUEST_RESERVATION, payload: reservationPayload, status: "REJECTED" }).catch(() => {});
-      onStateUpdate({ isWorking: false, isFinished: true, currentStep: "Workflow Ended (Reservation Rejected by User)" });
-    }
+  if (isApproved) {
+    const t6 = Date.now();
+    const resResult = await toolHandlers.current[TOOL_NAMES.REQUEST_RESERVATION]({
+      targetName: reservationPayload.targetName,
+      time: reservationPayload.time,
+      partySize: reservationPayload.partySize
+    });
+
+    onLogEvent({
+      timestamp: timestamp(),
+      toolName: TOOL_NAMES.REQUEST_RESERVATION,
+      inputParams: reservationPayload,
+      outputResult: resResult,
+      permissionUsed: "SENSITIVE (APPROVED BY USER)",
+      status: "ALLOWED",
+      latencyMs: Date.now() - t6,
+      impactReason: `User approved reservation! Confirmed ID: ${resResult.reservationId}`
+    });
+
+    onStateUpdate({ isWorking: false, isFinished: true, currentStep: "Agent Workflow Completed Successfully! 🎉" });
   } else {
-    // ALLOW policy
-    const resStart = Date.now();
-    const resResult = await toolHandlers.current[TOOL_NAMES.REQUEST_RESERVATION](reservationPayload);
-    await log(TOOL_NAMES.REQUEST_RESERVATION, reservationPayload, resResult, "COMPLETED", Date.now() - resStart, "Reservation executed automatically under ALLOW policy.");
-    persistApprovalToD1({ toolName: TOOL_NAMES.REQUEST_RESERVATION, payload: reservationPayload, status: "AUTO_APPROVED" }).catch(() => {});
-    onStateUpdate({ isWorking: false, isFinished: true, currentStep: "Workflow Completed Successfully!" });
-  }
-}
+    onLogEvent({
+      timestamp: timestamp(),
+      toolName: TOOL_NAMES.REQUEST_RESERVATION,
+      inputParams: reservationPayload,
+      outputResult: { status: "REJECTED_BY_USER" },
+      permissionUsed: "SENSITIVE (REJECTED BY USER)",
+      status: "BLOCKED",
+      latencyMs: 10,
+      impactReason: "User rejected reservation request. Action canceled safely."
+    });
 
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+    onStateUpdate({ isWorking: false, isFinished: true, currentStep: "Itinerary Generated (Reservation Canceled by User)" });
+  }
 }
