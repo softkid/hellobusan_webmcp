@@ -12,6 +12,7 @@ import SummaryBanner from "./components/SummaryBanner.jsx";
 
 import useHelloBusanMCP from "./hooks/useHelloBusanMCP.js";
 import { runAgentWorkflow } from "./services/agentEngine.js";
+import { fetchPlacesFromWorker, fetchRestaurantsFromWorker } from "./services/apiService.js";
 import { DEFAULT_PERMISSIONS, PRESET_GOALS, TOOL_NAMES } from "./constants/webmcpConfig.js";
 import { BUSAN_PLACES, BUSAN_RESTAURANTS, BUSAN_EVENTS, BUSAN_WEATHER } from "./data/mockBusanData.js";
 
@@ -32,9 +33,14 @@ export default function App() {
   const [approvalModalPayload, setApprovalModalPayload] = useState(null);
   const approvalResolverRef = useRef(null);
 
-  // Implement 10 WebMCP Tool Handlers
+  // Implement 10 WebMCP Tool Handlers connected to Cloudflare Worker & D1
   const toolHandlers = useRef({
     [TOOL_NAMES.SEARCH_PLACES]: async (query = {}) => {
+      // 1. Try Cloudflare Worker D1 Endpoint
+      const workerPlaces = await fetchPlacesFromWorker(query);
+      if (workerPlaces && workerPlaces.length > 0) return workerPlaces;
+
+      // 2. Fallback to dataset
       let filtered = BUSAN_PLACES;
       if (query.district) filtered = filtered.filter((p) => p.district.includes(query.district));
       if (query.maxPrice) filtered = filtered.filter((p) => p.priceMin <= query.maxPrice);
@@ -44,6 +50,11 @@ export default function App() {
     },
 
     [TOOL_NAMES.SEARCH_RESTAURANTS]: async (query = {}) => {
+      // 1. Try Cloudflare Worker D1 Endpoint
+      const workerRest = await fetchRestaurantsFromWorker(query);
+      if (workerRest && workerRest.length > 0) return workerRest;
+
+      // 2. Fallback to dataset
       let filtered = BUSAN_RESTAURANTS;
       if (query.district) filtered = filtered.filter((r) => r.district.includes(query.district));
       if (query.maxPriceAvg) filtered = filtered.filter((r) => r.priceAvg <= query.maxPriceAvg);
@@ -118,8 +129,9 @@ export default function App() {
   const handleApprove = () => {
     setApprovalModalPayload(null);
     if (approvalResolverRef.current) approvalResolverRef.current(true);
-  },
-  handleReject = () => {
+  };
+
+  const handleReject = () => {
     setApprovalModalPayload(null);
     if (approvalResolverRef.current) approvalResolverRef.current(false);
   };
