@@ -9,6 +9,7 @@ import ApprovalModal from "./components/ApprovalModal.jsx";
 import WebMCPBenchmark from "./components/WebMCPBenchmark.jsx";
 import AgentNetworkPanel from "./components/AgentNetworkPanel.jsx";
 import SummaryBanner from "./components/SummaryBanner.jsx";
+import WebMCPDoc from "./components/WebMCPDoc.jsx";
 
 import useHelloBusanMCP from "./hooks/useHelloBusanMCP.js";
 import { runAgentWorkflow } from "./services/agentEngine.js";
@@ -17,7 +18,7 @@ import { DEFAULT_PERMISSIONS, PRESET_GOALS, TOOL_NAMES } from "./constants/webmc
 import { BUSAN_PLACES, BUSAN_RESTAURANTS, BUSAN_EVENTS, BUSAN_WEATHER } from "./data/mockBusanData.js";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState("workspace"); // workspace | benchmark
+  const [activeTab, setActiveTab] = useState("workspace"); // workspace | doc | benchmark
   const [goalPrompt, setGoalPrompt] = useState(PRESET_GOALS[0].prompt);
   const [permissions, setPermissions] = useState(DEFAULT_PERMISSIONS);
   const [budgetLimit, setBudgetLimit] = useState(50000);
@@ -36,11 +37,9 @@ export default function App() {
   // Implement 10 WebMCP Tool Handlers connected to Cloudflare Worker & D1
   const toolHandlers = useRef({
     [TOOL_NAMES.SEARCH_PLACES]: async (query = {}) => {
-      // 1. Try Cloudflare Worker D1 Endpoint
       const workerPlaces = await fetchPlacesFromWorker(query);
       if (workerPlaces && workerPlaces.length > 0) return workerPlaces;
 
-      // 2. Fallback to dataset
       let filtered = BUSAN_PLACES;
       if (query.district) filtered = filtered.filter((p) => p.district.includes(query.district));
       if (query.maxPrice) filtered = filtered.filter((p) => p.priceMin <= query.maxPrice);
@@ -50,11 +49,9 @@ export default function App() {
     },
 
     [TOOL_NAMES.SEARCH_RESTAURANTS]: async (query = {}) => {
-      // 1. Try Cloudflare Worker D1 Endpoint
       const workerRest = await fetchRestaurantsFromWorker(query);
       if (workerRest && workerRest.length > 0) return workerRest;
 
-      // 2. Fallback to dataset
       let filtered = BUSAN_RESTAURANTS;
       if (query.district) filtered = filtered.filter((r) => r.district.includes(query.district));
       if (query.maxPriceAvg) filtered = filtered.filter((r) => r.priceAvg <= query.maxPriceAvg);
@@ -178,6 +175,8 @@ export default function App() {
       {/* Main Tab Views */}
       {activeTab === "benchmark" ? (
         <WebMCPBenchmark />
+      ) : activeTab === "doc" ? (
+        <WebMCPDoc toolHandlers={toolHandlers} />
       ) : (
         <>
           {/* Natural Language Goal Input Bar */}

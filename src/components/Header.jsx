@@ -1,5 +1,5 @@
 import React from "react";
-import { ShieldCheck, Cpu, RotateCcw, Sparkles } from "lucide-react";
+import { ShieldCheck, Cpu, RotateCcw, Sparkles, BookOpen } from "lucide-react";
 
 export default function Header({ toolCount, activeTab, setActiveTab, onReset }) {
   return (
@@ -55,6 +55,26 @@ export default function Header({ toolCount, activeTab, setActiveTab, onReset }) 
           >
             <Sparkles size={16} /> Workspace & Map
           </button>
+          
+          <button
+            onClick={() => setActiveTab("doc")}
+            style={{
+              padding: "0.45rem 0.9rem",
+              borderRadius: "8px",
+              border: "none",
+              background: activeTab === "doc" ? "rgba(52, 211, 153, 0.15)" : "transparent",
+              color: activeTab === "doc" ? "#34d399" : "var(--text-muted)",
+              fontWeight: 600,
+              fontSize: "0.85rem",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.4rem"
+            }}
+          >
+            <BookOpen size={16} /> Docs & Tool Inspector
+          </button>
+
           <button
             onClick={() => setActiveTab("benchmark")}
             style={{
