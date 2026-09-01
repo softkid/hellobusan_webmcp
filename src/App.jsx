@@ -199,13 +199,13 @@ export default function App() {
       ) : activeTab === "doc" ? (
         <WebMCPDoc toolHandlers={toolHandlers} lang={lang} />
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", flex: 1 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", flex: 1 }}>
           
           {/* Multi-Agent Swarm Visualizer Panel */}
           <SwarmPanel isWorking={agentState.isWorking} currentStep={agentState.currentStep} lang={lang} />
 
-          {/* Top Row: 3 Panels Grid (280px 1fr 280px) */}
-          <div className="top-grid-container" style={{ display: "grid", gridTemplateColumns: "280px 1fr 280px", gap: "0.85rem", height: "530px" }}>
+          {/* Top Row: 3 Panels Grid (Strictly 490px height) */}
+          <div className="top-grid-container" style={{ display: "grid", gridTemplateColumns: "280px 1fr 280px", gap: "0.85rem", height: "490px", overflow: "hidden" }}>
             
             {/* Left Panel: Agent Wallet */}
             <AgentWallet
@@ -225,25 +225,25 @@ export default function App() {
             />
 
             {/* Right Panel: WebMCP Network */}
-            <div className="network-panel-grid">
+            <div className="network-panel-grid" style={{ height: "100%", overflow: "hidden" }}>
               <WebMcpNetwork lang={lang} />
             </div>
 
           </div>
 
-          {/* Bottom Row: 4 Panels Grid (280px 1fr 1fr 280px - PERFECT VERTICAL ALIGNMENT WITH TOP ROW) */}
-          <div className="bottom-grid-container" style={{ display: "grid", gridTemplateColumns: "280px 1fr 1fr 280px", gap: "0.85rem", height: "250px" }}>
+          {/* Bottom Row: 4 Panels Grid (Strictly 250px height) */}
+          <div className="bottom-grid-container" style={{ display: "grid", gridTemplateColumns: "280px 1fr 1fr 280px", gap: "0.85rem", height: "250px", overflow: "hidden" }}>
             
-            {/* Panel 1: Agent Activity (Aligned to 280px Left Column) */}
+            {/* Panel 1: Agent Activity */}
             <AgentActivity logs={blackBoxLogs} lang={lang} />
 
-            {/* Panel 2: Agent Black Box (Center Left 1fr) */}
+            {/* Panel 2: Agent Black Box */}
             <AgentBlackBox lang={lang} />
 
-            {/* Panel 3: WebMCP Evaluation (Center Right 1fr) */}
+            {/* Panel 3: WebMCP Evaluation */}
             <WebMcpEvaluation lang={lang} />
 
-            {/* Panel 4: Agent Assistant (Aligned to 280px Right Column) */}
+            {/* Panel 4: Agent Assistant */}
             <AgentAssistant lang={lang} />
 
           </div>

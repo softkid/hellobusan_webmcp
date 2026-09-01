@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
-import { Save, Layers } from "lucide-react";
+import { Save } from "lucide-react";
 import { TRANSLATIONS } from "../constants/translations.js";
 
 export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang = "en" }) {
@@ -108,6 +108,7 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
     }
 
     const map = leafletMapRef.current;
+    setTimeout(() => { map.invalidateSize(); }, 200);
 
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
@@ -122,24 +123,24 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
         html: `
           <div style="
             background: linear-gradient(135deg, #7f56d9 0%, #00f2fe 100%);
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             border: 2px solid #ffffff;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.6);
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.6);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #ffffff;
             font-weight: 800;
-            font-size: 14px;
+            font-size: 13px;
             font-family: var(--font-heading);
           ">
             ${number}
           </div>
         `,
-        iconSize: [32, 32],
-        iconAnchor: [16, 16]
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
       });
     };
 
@@ -150,7 +151,7 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
         }).addTo(map);
 
         marker.bindPopup(`
-          <div style="font-size: 13px;">
+          <div style="font-size: 12px;">
             <strong style="color: #00f2fe;">${item.step}. ${item.title}</strong><br/>
             <span style="color: #94a3b8;">${item.subtitle} · ${item.time}</span><br/>
             <span style="color: #34d399; font-weight: 700;">₩${item.cost.toLocaleString()}</span>
@@ -167,71 +168,71 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
     if (routeCoords.length > 1) {
       const polyline = L.polyline(routeCoords, {
         color: "#00f2fe",
-        weight: 4,
-        dashArray: "8, 12",
+        weight: 3,
+        dashArray: "6, 10",
         opacity: 0.9
       }).addTo(map);
 
       polylineRef.current = polyline;
-      map.fitBounds(polyline.getBounds(), { padding: [40, 40] });
+      map.fitBounds(polyline.getBounds(), { padding: [30, 30] });
     }
   }, [activeItems]);
 
   return (
-    <div className="glass-panel" style={{ padding: "1rem", height: "100%", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+    <div className="glass-panel" style={{ padding: "0.85rem", height: "100%", display: "flex", flexDirection: "column", gap: "0.6rem", overflow: "hidden" }}>
       
       {/* AI Plan Header Bar */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.4rem" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-            <h2 style={{ fontSize: "1.05rem", margin: 0, color: "#ffffff", letterSpacing: "0.01em" }}>
+            <h2 style={{ fontSize: "1rem", margin: 0, color: "#ffffff", letterSpacing: "0.01em" }}>
               {t.aiPlanTitle}
             </h2>
-            <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{t.aiPlanSub}</span>
+            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>{t.aiPlanSub}</span>
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
-          <div style={{ fontSize: "0.78rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ fontSize: "0.75rem" }}>
             <span style={{ color: "var(--text-muted)" }}>{t.estCost} </span>
             <strong style={{ color: "#34d399", fontFamily: "var(--font-mono)" }}>₩{currentTotalCost.toLocaleString()}</strong>
           </div>
-          <div style={{ fontSize: "0.78rem" }}>
+          <div style={{ fontSize: "0.75rem" }}>
             <span style={{ color: "var(--text-muted)" }}>{t.estTime} </span>
             <strong style={{ color: "#ffffff", fontFamily: "var(--font-mono)" }}>6h</strong>
           </div>
-          <button className="btn-primary" style={{ padding: "0.3rem 0.75rem", fontSize: "0.75rem", background: "linear-gradient(135deg, #7f56d9 0%, #9e77ed 100%)", color: "#ffffff" }}>
-            <Save size={13} /> {t.savePlan}
+          <button className="btn-primary" style={{ padding: "0.25rem 0.65rem", fontSize: "0.72rem", background: "linear-gradient(135deg, #7f56d9 0%, #9e77ed 100%)", color: "#ffffff" }}>
+            <Save size={12} /> {t.savePlan}
           </button>
         </div>
       </div>
 
       {/* Horizontal Itinerary Cards Carousel */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "0.5rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "0.4rem" }}>
         {activeItems.map((item) => (
           <div
             key={item.step}
             style={{
               background: "rgba(10, 15, 26, 0.8)",
               border: "1px solid var(--border)",
-              borderRadius: "8px",
-              padding: "0.5rem",
+              borderRadius: "6px",
+              padding: "0.4rem",
               display: "flex",
               flexDirection: "column",
-              gap: "0.35rem",
+              gap: "0.25rem",
               position: "relative"
             }}
           >
             <div style={{
               position: "absolute",
-              top: "0.3rem",
-              left: "0.3rem",
-              background: "rgba(0,0,0,0.7)",
+              top: "0.2rem",
+              left: "0.2rem",
+              background: "rgba(0,0,0,0.75)",
               color: "#00f2fe",
-              fontSize: "0.65rem",
+              fontSize: "0.6rem",
               fontFamily: "var(--font-mono)",
-              padding: "0.05rem 0.35rem",
-              borderRadius: "4px",
+              padding: "0.05rem 0.25rem",
+              borderRadius: "3px",
               fontWeight: 700,
               zIndex: 2
             }}>
@@ -240,8 +241,8 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
 
             <div style={{
               width: "100%",
-              height: "52px",
-              borderRadius: "6px",
+              height: "44px",
+              borderRadius: "4px",
               overflow: "hidden",
               background: "rgba(255,255,255,0.05)",
               position: "relative"
@@ -255,13 +256,13 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
             </div>
 
             <div>
-              <strong style={{ fontSize: "0.75rem", color: "#ffffff", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              <strong style={{ fontSize: "0.7rem", color: "#ffffff", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {item.title}
               </strong>
-              <span style={{ fontSize: "0.65rem", color: "var(--text-dim)", display: "block" }}>
+              <span style={{ fontSize: "0.6rem", color: "var(--text-dim)", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {item.subtitle}
               </span>
-              <span style={{ fontSize: "0.7rem", color: "#34d399", fontWeight: 700, fontFamily: "var(--font-mono)" }}>
+              <span style={{ fontSize: "0.65rem", color: "#34d399", fontWeight: 700, fontFamily: "var(--font-mono)" }}>
                 ₩{item.cost.toLocaleString()}
               </span>
             </div>
@@ -269,16 +270,18 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
         ))}
       </div>
 
-      {/* Satellite/Dark Map Section */}
-      <div style={{ position: "relative", flex: 1, minHeight: "320px", borderRadius: "10px", overflow: "hidden" }}>
+      {/* Strictly Contained Satellite/Dark Map Section */}
+      <div style={{ position: "relative", flex: 1, width: "100%", borderRadius: "8px", overflow: "hidden", minHeight: "260px" }}>
+        
+        {/* Map Type Switcher */}
         <div style={{
           position: "absolute",
-          bottom: "1rem",
-          left: "1rem",
+          bottom: "0.6rem",
+          left: "0.6rem",
           zIndex: 1000,
           background: "rgba(10, 15, 26, 0.85)",
-          padding: "0.2rem",
-          borderRadius: "6px",
+          padding: "0.15rem",
+          borderRadius: "5px",
           border: "1px solid var(--border)",
           display: "flex",
           gap: "0.2rem"
@@ -286,12 +289,12 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
           <button
             onClick={() => setMapType("dark")}
             style={{
-              padding: "0.25rem 0.6rem",
-              borderRadius: "4px",
+              padding: "0.2rem 0.5rem",
+              borderRadius: "3px",
               border: "none",
               background: mapType === "dark" ? "rgba(0, 242, 254, 0.2)" : "transparent",
               color: mapType === "dark" ? "#00f2fe" : "var(--text-muted)",
-              fontSize: "0.7rem",
+              fontSize: "0.65rem",
               fontWeight: 600,
               cursor: "pointer"
             }}
@@ -301,12 +304,12 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
           <button
             onClick={() => setMapType("satellite")}
             style={{
-              padding: "0.25rem 0.6rem",
-              borderRadius: "4px",
+              padding: "0.2rem 0.5rem",
+              borderRadius: "3px",
               border: "none",
               background: mapType === "satellite" ? "rgba(0, 242, 254, 0.2)" : "transparent",
               color: mapType === "satellite" ? "#00f2fe" : "var(--text-muted)",
-              fontSize: "0.7rem",
+              fontSize: "0.65rem",
               fontWeight: 600,
               cursor: "pointer"
             }}
@@ -315,7 +318,15 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
           </button>
         </div>
 
-        <div ref={mapContainerRef} style={{ width: "100%", height: "100%", minHeight: "320px" }} />
+        {/* Absolute Positioned Map Container guaranteeing ZERO overflow */}
+        <div
+          ref={mapContainerRef}
+          style={{
+            position: "absolute",
+            top: 0, left: 0, right: 0, bottom: 0,
+            width: "100%", height: "100%"
+          }}
+        />
       </div>
 
     </div>
