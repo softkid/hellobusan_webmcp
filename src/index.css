@@ -128,9 +128,31 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(0, 242, 254, 0.25);
 }
 
-/* Animations */
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+/* Responsive Media Queries for Mobile & Tablet */
+@media (max-width: 1280px) {
+  .top-grid-container {
+    grid-template-columns: 260px 1fr !important;
+    height: auto !important;
+  }
+  .network-panel-grid {
+    grid-column: span 2;
+  }
+  .bottom-grid-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    height: auto !important;
+  }
 }
-.spin-icon { animation: spin 1s linear infinite; }
+
+@media (max-width: 768px) {
+  .top-grid-container {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+  }
+  .bottom-grid-container {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+  }
+  .itinerary-carousel {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}

@@ -7,5 +7,5 @@ ENVIRONMENT = "production"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "hellobusan-db"
-database_id = "hellobusan-d1-instance-id"
+database_name = "hellobusan"
+database_id = "76019a8a-7d52-4603-a3b5-33176b42c2fd"

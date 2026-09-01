@@ -189,8 +189,8 @@ export default function App() {
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", flex: 1 }}>
           
-          {/* Top Row: 3 Panels Grid (Agent Wallet | AI Plan Map | WebMCP Network) */}
-          <div style={{ display: "grid", gridTemplateColumns: "270px 1fr 310px", gap: "1rem", height: "540px" }}>
+          {/* Top Row: 3 Panels Responsive Grid */}
+          <div className="top-grid-container" style={{ display: "grid", gridTemplateColumns: "270px 1fr 310px", gap: "1rem", minHeight: "540px" }}>
             
             {/* Left Panel: Agent Wallet */}
             <AgentWallet
@@ -210,12 +210,14 @@ export default function App() {
             />
 
             {/* Right Panel: WebMCP Network */}
-            <WebMcpNetwork lang={lang} />
+            <div className="network-panel-grid">
+              <WebMcpNetwork lang={lang} />
+            </div>
 
           </div>
 
-          {/* Bottom Row: 4 Panels Grid (Activity | Black Box | Evaluation | Assistant) */}
-          <div style={{ display: "grid", gridTemplateColumns: "260px 1.4fr 1.3fr 260px", gap: "1rem", height: "240px" }}>
+          {/* Bottom Row: 4 Panels Responsive Grid */}
+          <div className="bottom-grid-container" style={{ display: "grid", gridTemplateColumns: "260px 1.4fr 1.3fr 260px", gap: "1rem", minHeight: "240px" }}>
             
             {/* Panel 1: Agent Activity */}
             <AgentActivity logs={blackBoxLogs} lang={lang} />

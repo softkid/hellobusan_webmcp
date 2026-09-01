@@ -6,7 +6,7 @@ export default function AgentBlackBox({ lang = "en" }) {
   const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
 
   return (
-    <div className="glass-panel" style={{ padding: "0.85rem", height: "100%", display: "flex", flexDirection: "column" }}>
+    <div className="glass-panel" style={{ padding: "0.85rem", height: "100%", minHeight: "220px", display: "flex", flexDirection: "column" }}>
       
       {/* Title */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.6rem" }}>

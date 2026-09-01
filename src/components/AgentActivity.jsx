@@ -6,11 +6,11 @@ export default function AgentActivity({ logs, lang = "en" }) {
   const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
 
   const defaultLogs = [
-    { time: "14:02:11", name: "search_places", detail: "Kid-friendly indoor place search", badge: "12 results", color: "badge-allow" },
+    { time: "14:02:11", name: "search_places", detail: "Kid-friendly indoor venue search", badge: "12 results", color: "badge-allow" },
     { time: "14:02:13", name: "search_restaurants", detail: "Filter dining under ₩50,000 budget", badge: "8 results", color: "badge-allow" },
     { time: "14:02:15", name: "calculate_route", detail: "Route time optimization", badge: "4 routes", color: "badge-allow" },
     { time: "14:02:18", name: "remove_activity", detail: "Exceeded budget items removed", badge: "3 removed", color: "badge-ask" },
-    { time: "14:02:21", name: "reserve_restaurant", detail: "Check reservation availability", badge: t.ask, color: "badge-deny" }
+    { time: "14:02:21", name: "reserve_restaurant", detail: "Check reservation availability", badge: "ASK APPROVAL", color: "badge-deny" }
   ];
 
   const activeLogs = logs && logs.length > 0 ? logs.map((l) => ({
@@ -22,7 +22,7 @@ export default function AgentActivity({ logs, lang = "en" }) {
   })) : defaultLogs;
 
   return (
-    <div className="glass-panel" style={{ padding: "0.85rem", height: "100%", display: "flex", flexDirection: "column" }}>
+    <div className="glass-panel" style={{ padding: "0.85rem", height: "100%", minHeight: "220px", display: "flex", flexDirection: "column" }}>
       
       {/* Title */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.6rem" }}>
