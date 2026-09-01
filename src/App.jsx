@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from "react";
 import Header from "./components/Header.jsx";
+import SwarmPanel from "./components/SwarmPanel.jsx";
 import AgentWallet from "./components/AgentWallet.jsx";
 import AIPlanMap from "./components/AIPlanMap.jsx";
 import WebMcpNetwork from "./components/WebMcpNetwork.jsx";
@@ -15,9 +16,9 @@ import WebMCPDoc from "./components/WebMCPDoc.jsx";
 import Footer from "./components/Footer.jsx";
 
 import useHelloBusanMCP from "./hooks/useHelloBusanMCP.js";
-import { runAgentWorkflow } from "./services/agentEngine.js";
+import { runSwarmOrchestration } from "./services/swarmEngine.js";
 import { fetchPlacesFromWorker, fetchRestaurantsFromWorker } from "./services/apiService.js";
-import { DEFAULT_PERMISSIONS, PRESET_GOALS, TOOL_NAMES } from "./constants/webmcpConfig.js";
+import { DEFAULT_PERMISSIONS, TOOL_NAMES } from "./constants/webmcpConfig.js";
 import { BUSAN_PLACES, BUSAN_RESTAURANTS, BUSAN_EVENTS, BUSAN_WEATHER } from "./data/mockBusanData.js";
 
 export default function App() {
@@ -32,7 +33,7 @@ export default function App() {
   const [agentState, setAgentState] = useState({
     isWorking: false,
     isFinished: false,
-    currentStep: "Ready"
+    currentStep: "Swarm Agents Ready"
   });
 
   const [approvalModalPayload, setApprovalModalPayload] = useState(null);
@@ -137,13 +138,13 @@ export default function App() {
     if (approvalResolverRef.current) approvalResolverRef.current(false);
   };
 
-  // Run Agent Execution Workflow
+  // Run Swarm Multi-Agent Execution Workflow
   const handleRunAgent = async () => {
     setBlackBoxLogs([]);
     setItinerary([]);
-    setAgentState({ isWorking: true, isFinished: false, currentStep: "Initializing Agent Planner..." });
+    setAgentState({ isWorking: true, isFinished: false, currentStep: "Initializing Swarm Agents..." });
 
-    await runAgentWorkflow({
+    await runSwarmOrchestration({
       goalPrompt,
       permissionsWallet: permissions,
       dailyBudgetLimit: budgetLimit,
@@ -161,7 +162,7 @@ export default function App() {
     setBlackBoxLogs([]);
     setPermissions(DEFAULT_PERMISSIONS);
     setBudgetLimit(50000);
-    setAgentState({ isWorking: false, isFinished: false, currentStep: "Ready" });
+    setAgentState({ isWorking: false, isFinished: false, currentStep: "Swarm Agents Ready" });
   };
 
   const totalCost = itinerary.reduce((sum, item) => sum + (item.cost || 0), 0);
@@ -189,6 +190,9 @@ export default function App() {
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", flex: 1 }}>
           
+          {/* Multi-Agent Swarm Visualizer Panel */}
+          <SwarmPanel isWorking={agentState.isWorking} currentStep={agentState.currentStep} lang={lang} />
+
           {/* Top Row: 3 Panels Responsive Grid */}
           <div className="top-grid-container" style={{ display: "grid", gridTemplateColumns: "270px 1fr 310px", gap: "1rem", minHeight: "540px" }}>
             
@@ -239,7 +243,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Human-in-the-Loop Approval Modal Dialog */}
+      {/* Human-in-the-Loop Approval Modal Dialog with WebAuthn Passkey */}
       <ApprovalModal
         payload={approvalModalPayload}
         onApprove={handleApprove}

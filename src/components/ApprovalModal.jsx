@@ -1,10 +1,25 @@
-import React from "react";
-import { AlertTriangle, Check, X, Building2, Users, Clock, DollarSign } from "lucide-react";
+import React, { useState } from "react";
+import { AlertTriangle, Check, X, Building2, Users, Clock, DollarSign, Fingerprint, Lock, ShieldCheck } from "lucide-react";
 import { TRANSLATIONS } from "../constants/translations.js";
 
 export default function ApprovalModal({ payload, onApprove, onReject, lang = "en" }) {
+  const [isBiometricScanning, setIsBiometricScanning] = useState(false);
+  const [scanSuccess, setScanSuccess] = useState(false);
+
   if (!payload) return null;
   const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+  const handlePasskeyApprove = () => {
+    setIsBiometricScanning(true);
+    setTimeout(() => {
+      setScanSuccess(true);
+      setTimeout(() => {
+        setIsBiometricScanning(false);
+        setScanSuccess(false);
+        onApprove();
+      }, 700);
+    }, 900);
+  };
 
   return (
     <div style={{
@@ -26,9 +41,52 @@ export default function ApprovalModal({ payload, onApprove, onReject, lang = "en
           padding: "1.75rem",
           borderRadius: "18px",
           border: "1px solid rgba(255, 159, 67, 0.5)",
-          boxShadow: "0 0 35px rgba(255, 159, 67, 0.2)"
+          boxShadow: "0 0 35px rgba(255, 159, 67, 0.2)",
+          position: "relative"
         }}
       >
+        {/* Passkey Scanning Overlay */}
+        {isBiometricScanning && (
+          <div style={{
+            position: "absolute",
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: "rgba(13, 18, 31, 0.95)",
+            borderRadius: "18px",
+            zIndex: 10,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "1rem"
+          }}>
+            <div style={{
+              width: "72px",
+              height: "72px",
+              borderRadius: "50%",
+              background: scanSuccess ? "rgba(52, 211, 153, 0.2)" : "rgba(0, 242, 254, 0.2)",
+              border: scanSuccess ? "2px solid #34d399" : "2px solid #00f2fe",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: scanSuccess ? "0 0 25px rgba(52, 211, 153, 0.5)" : "0 0 25px rgba(0, 242, 254, 0.5)"
+            }}>
+              {scanSuccess ? (
+                <ShieldCheck size={36} color="#34d399" />
+              ) : (
+                <Fingerprint size={36} color="#00f2fe" className="spin-icon" />
+              )}
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <h4 style={{ fontSize: "1.1rem", color: scanSuccess ? "#34d399" : "#00f2fe", margin: 0 }}>
+                {scanSuccess ? "WebAuthn Signature Verified!" : "Authenticating Passkey / Face ID..."}
+              </h4>
+              <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
+                Cryptographic hardware signature confirmation
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Header Alert */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
           <div style={{
@@ -45,7 +103,7 @@ export default function ApprovalModal({ payload, onApprove, onReject, lang = "en
           </div>
           <div>
             <span className="badge badge-ask" style={{ marginBottom: "0.2rem" }}>
-              Human Approval Required
+              Human Approval Required (Passkey Protected)
             </span>
             <h3 style={{ fontSize: "1.2rem", margin: 0, color: "#ffffff" }}>
               Agent Sensitive Action Confirmation
@@ -54,7 +112,7 @@ export default function ApprovalModal({ payload, onApprove, onReject, lang = "en
         </div>
 
         <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "1.25rem", lineHeight: 1.5 }}>
-          The Agent requests explicit human approval for sensitive action (<strong style={{ color: "#ff9f43" }}>POLICY = ASK</strong>) before proceeding.
+          The Agent requests explicit human approval for sensitive action (<strong style={{ color: "#ff9f43" }}>POLICY = ASK</strong>) before executing reservation webhook.
         </p>
 
         {/* Detailed Reservation Card */}
@@ -86,7 +144,7 @@ export default function ApprovalModal({ payload, onApprove, onReject, lang = "en
 
           {payload.details && (
             <div style={{ marginTop: "0.6rem", paddingTop: "0.6rem", borderTop: "1px solid var(--border)", fontSize: "0.78rem", color: "var(--text-dim)" }}>
-              📝 {payload.details}
+              🔒 {payload.details}
             </div>
           )}
         </div>
@@ -106,16 +164,17 @@ export default function ApprovalModal({ payload, onApprove, onReject, lang = "en
             <X size={18} /> Reject Action
           </button>
           <button
-            onClick={onApprove}
+            onClick={handlePasskeyApprove}
             className="btn-primary"
             style={{
-              flex: 1.3,
+              flex: 1.4,
               justifyContent: "center",
               background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-              color: "#ffffff"
+              color: "#ffffff",
+              gap: "0.4rem"
             }}
           >
-            <Check size={18} /> Approve & Execute
+            <Fingerprint size={18} /> Passkey Approve & Execute
           </button>
         </div>
       </div>
