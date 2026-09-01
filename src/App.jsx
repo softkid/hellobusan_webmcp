@@ -168,7 +168,7 @@ export default function App() {
   const totalCost = itinerary.reduce((sum, item) => sum + (item.cost || 0), 0);
 
   return (
-    <div style={{ maxWidth: "1600px", margin: "0 auto", padding: "1rem 1.25rem", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div style={{ maxWidth: "1600px", margin: "0 auto", padding: "0.85rem 1.25rem", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       
       {/* Top Header Bar with i18n Switcher */}
       <Header
@@ -188,13 +188,13 @@ export default function App() {
       ) : activeTab === "doc" ? (
         <WebMCPDoc toolHandlers={toolHandlers} lang={lang} />
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", flex: 1 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", flex: 1 }}>
           
           {/* Multi-Agent Swarm Visualizer Panel */}
           <SwarmPanel isWorking={agentState.isWorking} currentStep={agentState.currentStep} lang={lang} />
 
           {/* Top Row: 3 Panels Responsive Grid */}
-          <div className="top-grid-container" style={{ display: "grid", gridTemplateColumns: "270px 1fr 310px", gap: "1rem", minHeight: "540px" }}>
+          <div className="top-grid-container" style={{ display: "grid", gridTemplateColumns: "270px 1fr 310px", gap: "0.85rem", minHeight: "500px", alignItems: "stretch" }}>
             
             {/* Left Panel: Agent Wallet */}
             <AgentWallet
@@ -221,7 +221,7 @@ export default function App() {
           </div>
 
           {/* Bottom Row: 4 Panels Responsive Grid */}
-          <div className="bottom-grid-container" style={{ display: "grid", gridTemplateColumns: "260px 1.4fr 1.3fr 260px", gap: "1rem", minHeight: "240px" }}>
+          <div className="bottom-grid-container" style={{ display: "grid", gridTemplateColumns: "260px 1.4fr 1.3fr 260px", gap: "0.85rem", minHeight: "220px", alignItems: "stretch" }}>
             
             {/* Panel 1: Agent Activity */}
             <AgentActivity logs={blackBoxLogs} lang={lang} />
