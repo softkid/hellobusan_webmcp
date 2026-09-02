@@ -7,8 +7,8 @@ export default function AgentWallet({ wallet, onSetRowPolicy, onSetDailyLimit, o
     <section className="panel wallet-panel">
       <div className="panel__header">
         <h2>AGENT WALLET</h2>
-        <span className="panel__subtitle">AI 권한 지갑</span>
-        <button className="panel__action" onClick={onReset} title="기본값으로 초기화">
+        <span className="panel__subtitle">Your AI permission wallet</span>
+        <button className="panel__action" onClick={onReset} title="Reset to defaults">
           Reset
         </button>
       </div>
@@ -17,7 +17,7 @@ export default function AgentWallet({ wallet, onSetRowPolicy, onSetDailyLimit, o
         <div className="wallet-banner__icon">🛡</div>
         <div>
           <div className="wallet-banner__title">You stay in control.</div>
-          <div className="wallet-banner__sub">AI가 사용할 수 있는 권한을 직접 설정하세요.</div>
+          <div className="wallet-banner__sub">Decide exactly what the AI is allowed to do.</div>
         </div>
       </div>
 
@@ -33,11 +33,11 @@ export default function AgentWallet({ wallet, onSetRowPolicy, onSetDailyLimit, o
               className={`wallet-row wallet-row--${currentPolicy} ${row.locked ? "wallet-row--locked" : ""}`}
               disabled={row.locked}
               onClick={() => onSetRowPolicy(row.key, CYCLE[currentPolicy])}
-              title={row.locked ? "이 권한은 이 MVP에서 항상 차단됩니다" : "클릭하여 정책 변경 (허용 → 승인 필요 → 차단)"}
+              title={row.locked ? "This permission is always blocked in this MVP" : "Click to cycle: Allow → Ask first → Blocked"}
             >
               <span className="wallet-row__label">
                 {row.locked && "🔒 "}
-                {row.label}
+                {row.label} <span className="wallet-row__sub">{row.sub}</span>
               </span>
               <span className={`policy-pill policy-pill--${currentPolicy}`}>{POLICY_LABEL[currentPolicy]}</span>
             </button>

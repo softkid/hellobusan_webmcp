@@ -100,10 +100,10 @@ export function parseGoal(rawText) {
 
 export function describeGoal(goal) {
   const parts = [];
-  parts.push(`예산 ₩${goal.budget.toLocaleString()}`);
-  parts.push(`${goal.durationHours}시간`);
-  if (goal.hasChild) parts.push("아이 동반");
-  if (goal.rainy) parts.push("우천");
+  parts.push(`Budget ₩${goal.budget.toLocaleString()}`);
+  parts.push(`${goal.durationHours}h`);
+  if (goal.hasChild) parts.push("with kid");
+  if (goal.rainy) parts.push("rainy");
   if (goal.district) parts.push(goal.district);
   if (goal.dietary.length) parts.push(goal.dietary.join(", "));
   return parts.join(" · ");

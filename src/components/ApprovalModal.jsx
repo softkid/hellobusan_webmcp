@@ -14,11 +14,11 @@ export default function ApprovalModal({ pendingApproval, onResolve }) {
         </div>
         <div className="approval-modal__meta">
           {payload.time && <span>{payload.time}</span>}
-          {payload.partySize && <span>{payload.partySize}명</span>}
+          {payload.partySize && <span>{payload.partySize} people</span>}
           {typeof payload.cost === "number" && <span>{krw(payload.cost)}</span>}
         </div>
         <p className="approval-modal__note">
-          이 예약은 사람이 승인해야만 확정됩니다. 결제는 이 MVP에서 실행되지 않습니다.
+          This reservation is confirmed only once a human approves it here. No payment is processed in this MVP.
         </p>
         <div className="approval-modal__actions">
           <button className="btn btn--ghost" onClick={() => onResolve(id, false)}>

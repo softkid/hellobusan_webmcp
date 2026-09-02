@@ -55,13 +55,13 @@ export function buildRoutePath(stops) {
 }
 
 export const DISTRICT_LABELS = [
-  { name: "사하구", lat: 35.104, lng: 128.995 },
-  { name: "서구", lat: 35.098, lng: 129.017 },
-  { name: "중구", lat: 35.1, lng: 129.033 },
-  { name: "영도구", lat: 35.07, lng: 129.07 },
-  { name: "부산진구", lat: 35.163, lng: 129.06 },
-  { name: "동구", lat: 35.13, lng: 129.045 },
-  { name: "남구", lat: 35.13, lng: 129.1 },
-  { name: "수영구", lat: 35.165, lng: 129.115 },
-  { name: "해운대구", lat: 35.19, lng: 129.165 },
+  { name: "Saha", lat: 35.104, lng: 128.995 },
+  { name: "Seo-gu", lat: 35.098, lng: 129.017 },
+  { name: "Jung-gu", lat: 35.1, lng: 129.033 },
+  { name: "Yeongdo", lat: 35.07, lng: 129.07 },
+  { name: "Busanjin", lat: 35.163, lng: 129.06 },
+  { name: "Dong-gu", lat: 35.13, lng: 129.045 },
+  { name: "Nam-gu", lat: 35.13, lng: 129.1 },
+  { name: "Suyeong", lat: 35.165, lng: 129.115 },
+  { name: "Haeundae", lat: 35.19, lng: 129.165 },
 ];

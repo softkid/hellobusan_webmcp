@@ -25,7 +25,7 @@ export default function BusanMap({ items }) {
         {DISTRICT_LABELS.map((d) => {
           const p = project(d.lat, d.lng);
           return (
-            <text key={d.name} x={p.x} y={p.y} className="busan-map__district">
+            <text key={d.name} x={p.x} y={p.y} textAnchor="middle" className="busan-map__district">
               {d.name}
             </text>
           );
@@ -50,7 +50,7 @@ export default function BusanMap({ items }) {
       </svg>
 
       {items.length === 0 && (
-        <div className="busan-map__empty">목표를 입력하면 에이전트가 부산 지도 위에 일정을 그립니다.</div>
+        <div className="busan-map__empty">Type a goal above and your agent will draw the plan on this map.</div>
       )}
     </div>
   );

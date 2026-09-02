@@ -12,12 +12,12 @@ const STEP_DELAY_MS = 550;
 
 function denyMessage(name) {
   if (name === "process_payment") {
-    return "🔒 결제(Payment)는 이 MVP에서 절대 실행되지 않습니다. Human Approval 아키텍처가 준비되기 전까지 잠겨 있습니다.";
+    return "🔒 Payment is never executed in this MVP — locked until a Human Approval architecture ships.";
   }
   if (name === "update_profile") {
-    return "🔒 개인정보 변경(Profile mutation)은 이 MVP에서 차단되어 있습니다.";
+    return "🔒 Profile mutation is blocked in this MVP.";
   }
-  return `🔒 "${name}"은(는) 현재 정책상 차단되어 있습니다.`;
+  return `🔒 "${name}" is currently blocked by policy.`;
 }
 
 export function useAgentEngine() {
@@ -112,7 +112,7 @@ export function useAgentEngine() {
         district: input.district || undefined,
       }).slice(0, input.limit ?? 12);
       return {
-        content: [{ type: "text", text: `${results.length}개 장소를 찾았습니다.` }],
+        content: [{ type: "text", text: `Found ${results.length} places.` }],
         summary: `${results.length} results`,
         data: results,
       };
@@ -127,7 +127,7 @@ export function useAgentEngine() {
         district: input.district || undefined,
       }).slice(0, input.limit ?? 8);
       return {
-        content: [{ type: "text", text: `${results.length}개 행사를 찾았습니다.` }],
+        content: [{ type: "text", text: `Found ${results.length} events.` }],
         summary: `${results.length} results`,
         data: results,
       };
@@ -143,7 +143,7 @@ export function useAgentEngine() {
         district: input.district || undefined,
       }).slice(0, input.limit ?? 8);
       return {
-        content: [{ type: "text", text: `${results.length}개 식당을 찾았습니다.` }],
+        content: [{ type: "text", text: `Found ${results.length} restaurants.` }],
         summary: `${results.length} results`,
         data: results,
       };
@@ -168,7 +168,7 @@ export function useAgentEngine() {
       const partySize = input.partySize ?? ctx.itinerary.partySize ?? 1;
       const total = items.reduce((s, it) => s + (it.estCost ?? (it.price_min ?? 0) * partySize), 0);
       return {
-        content: [{ type: "text", text: `예상 비용 ${krw(total)} (${partySize}인 기준)` }],
+        content: [{ type: "text", text: `Estimated cost ${krw(total)} (for ${partySize} ${partySize === 1 ? "person" : "people"})` }],
         summary: krw(total),
         data: { total, partySize },
       };
@@ -188,7 +188,7 @@ export function useAgentEngine() {
         totalKm += km;
       }
       return {
-        content: [{ type: "text", text: `${legs.length}개 구간, 총 이동 ${totalMin}분` }],
+        content: [{ type: "text", text: `${legs.length} legs, ${totalMin}min total travel` }],
         summary: `${legs.length} routes · ${totalMin}min`,
         data: { legs, totalMin, totalKm: Math.round(totalKm * 10) / 10 },
       };
@@ -197,7 +197,7 @@ export function useAgentEngine() {
     async get_itinerary() {
       const ctx = ctxRef.current;
       return {
-        content: [{ type: "text", text: `현재 일정: ${ctx.itinerary.items.length}개 항목` }],
+        content: [{ type: "text", text: `Current itinerary: ${ctx.itinerary.items.length} items` }],
         summary: `${ctx.itinerary.items.length} items`,
         data: ctx.itinerary,
       };
@@ -220,7 +220,7 @@ export function useAgentEngine() {
       await sleep(10);
       const after = input.payload?.items?.length ?? before;
       return {
-        content: [{ type: "text", text: `일정이 업데이트되었습니다 (${after}개 항목).` }],
+        content: [{ type: "text", text: `Itinerary updated (${after} items).` }],
         summary: `${after} items`,
         data: input,
       };
@@ -235,7 +235,7 @@ export function useAgentEngine() {
         reservation: { ...input, status: "confirmed", confirmedAt: new Date().toISOString() },
       }));
       return {
-        content: [{ type: "text", text: `${input.name} 예약이 확정되었습니다 (결제는 진행되지 않았습니다).` }],
+        content: [{ type: "text", text: `${input.name} reservation confirmed (no payment was processed).` }],
         summary: `Reserved: ${input.name}`,
         data: input,
       };
@@ -263,20 +263,20 @@ export function useAgentEngine() {
 
       if (policy === "deny") {
         const msg = denyMessage(name);
-        pushBlackbox({ tool: name, input, output: msg, permission: policy, status: "BLOCKED", latencyMs: 0, impact: "실행 차단됨" });
+        pushBlackbox({ tool: name, input, output: msg, permission: policy, status: "BLOCKED", latencyMs: 0, impact: "Execution blocked" });
         pushActivity({ tool: name, status: "blocked", message: msg });
         if (runMetaRef.current) runMetaRef.current.errors += 1;
         throw new Error(msg);
       }
 
       if (policy === "ask") {
-        pushActivity({ tool: name, status: "pending", message: "사용자 승인 대기 중" });
+        pushActivity({ tool: name, status: "pending", message: "Waiting for your approval" });
         try {
           await requestApproval({ toolName: name, input, payload: buildApprovalPayload(name, input) });
         } catch (err) {
           const latencyMs = Math.round(performance.now() - startedAt);
-          pushBlackbox({ tool: name, input, output: "REJECTED", permission: policy, status: "REJECTED", latencyMs, impact: "사용자가 거절함" });
-          pushActivity({ tool: name, status: "rejected", message: "사용자가 승인을 거절했습니다" });
+          pushBlackbox({ tool: name, input, output: "REJECTED", permission: policy, status: "REJECTED", latencyMs, impact: "Rejected by user" });
+          pushActivity({ tool: name, status: "rejected", message: "You rejected the approval request." });
           if (runMetaRef.current) runMetaRef.current.errors += 1;
           throw err;
         }
@@ -302,7 +302,7 @@ export function useAgentEngine() {
         return result;
       } catch (err) {
         const latencyMs = Math.round(performance.now() - startedAt);
-        pushBlackbox({ tool: name, input, output: String(err.message || err), permission: policy, status: "ERROR", latencyMs, impact: "오류" });
+        pushBlackbox({ tool: name, input, output: String(err.message || err), permission: policy, status: "ERROR", latencyMs, impact: "Error" });
         pushActivity({ tool: name, status: "error", message: String(err.message || err) });
         if (runMetaRef.current) runMetaRef.current.errors += 1;
         throw err;
@@ -321,7 +321,7 @@ export function useAgentEngine() {
       setAgentStatus("working");
       setItinerary((prev) => ({ ...prev, items: [], removed: [], reservation: null, goal }));
       runMetaRef.current = { toolCalls: 0, errors: 0, startedAt: performance.now() };
-      pushActivity({ tool: "agent", status: "start", message: `목표 접수: "${goal.raw}"` });
+      pushActivity({ tool: "agent", status: "start", message: `Goal received: "${goal.raw}"` });
       let finalMeta = null;
 
       try {

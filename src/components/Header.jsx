@@ -30,13 +30,13 @@ export default function Header({ onSubmitGoal, agentStatus, webmcpSupported }) {
           onChange={(e) => setText(e.target.value)}
           onFocus={() => setShowExamples(true)}
           onBlur={() => setTimeout(() => setShowExamples(false), 150)}
-          placeholder="오늘 부산에서 하고 싶은 일을 말해보세요..."
+          placeholder="Tell your agent what you want to do in Busan today..."
         />
         <button
           type="submit"
           className="goal-bar__submit"
           disabled={agentStatus === "working"}
-          title="에이전트 실행"
+          title="Run agent"
         >
           {agentStatus === "working" ? "…" : "✦"}
         </button>

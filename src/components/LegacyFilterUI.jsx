@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { filterPlaces, filterRestaurants } from "../lib/data.js";
 
-const DISTRICTS = ["전체", "Haeundae-gu", "Jung-gu", "Saha-gu", "Suyeong-gu", "Yeongdo-gu"];
+const DISTRICTS = ["All", "Haeundae-gu", "Jung-gu", "Saha-gu", "Suyeong-gu", "Yeongdo-gu"];
 const BUDGETS = [30000, 50000, 80000];
 
 /**
@@ -57,13 +57,13 @@ export default function LegacyFilterUI({ cityData, onInteract, onComplete }) {
             tick();
           }}
         >
-          1. 오늘 날씨 확인
+          1. Check today's weather
         </button>
-        {weatherChecked && <span className="legacy-ui__ok"> ✓ 확인됨</span>}
+        {weatherChecked && <span className="legacy-ui__ok"> ✓ Checked</span>}
       </div>
 
       <div className="legacy-ui__step">
-        <span>2. 지역 선택: </span>
+        <span>2. Pick a district: </span>
         {DISTRICTS.map((d) => (
           <button
             key={d}
@@ -82,16 +82,16 @@ export default function LegacyFilterUI({ cityData, onInteract, onComplete }) {
       </div>
 
       <div className="legacy-ui__step">
-        <span>3. 아이 동반? </span>
-        {["예", "아니오"].map((v) => (
+        <span>3. Bringing a kid? </span>
+        {["Yes", "No"].map((v) => (
           <button
             key={v}
             type="button"
             data-testid={`child-${v}`}
             disabled={!canFilters}
-            className={hasChild === (v === "예") ? "legacy-ui__chip--selected" : ""}
+            className={hasChild === (v === "Yes") ? "legacy-ui__chip--selected" : ""}
             onClick={() => {
-              setHasChild(v === "예");
+              setHasChild(v === "Yes");
               tick();
             }}
           >
@@ -101,7 +101,7 @@ export default function LegacyFilterUI({ cityData, onInteract, onComplete }) {
       </div>
 
       <div className="legacy-ui__step">
-        <span>4. 예산: </span>
+        <span>4. Budget: </span>
         {BUDGETS.map((b) => (
           <button
             key={b}
@@ -128,13 +128,13 @@ export default function LegacyFilterUI({ cityData, onInteract, onComplete }) {
             const results = filterPlaces(cityData.places, {
               rainy: false,
               hasChild,
-              district: district === "전체" ? undefined : district,
+              district: district === "All" ? undefined : district,
             }).slice(0, 6);
             setPlaceResults(results);
             tick();
           }}
         >
-          5. 장소 검색
+          5. Search places
         </button>
       </div>
 
@@ -155,7 +155,7 @@ export default function LegacyFilterUI({ cityData, onInteract, onComplete }) {
               {p.name}
             </button>
           ))}
-          <div className="legacy-ui__hint">최소 3개 추가 ({addedPlaces.length}/3)</div>
+          <div className="legacy-ui__hint">Add at least 3 ({addedPlaces.length}/3)</div>
         </div>
       )}
 
@@ -173,7 +173,7 @@ export default function LegacyFilterUI({ cityData, onInteract, onComplete }) {
             tick();
           }}
         >
-          6. 식당 검색
+          6. Search restaurants
         </button>
       </div>
 
@@ -207,9 +207,9 @@ export default function LegacyFilterUI({ cityData, onInteract, onComplete }) {
             tick();
           }}
         >
-          7. 경로 계산하기
+          7. Calculate route
         </button>
-        {routeDone && <span className="legacy-ui__ok"> ✓ 계산됨</span>}
+        {routeDone && <span className="legacy-ui__ok"> ✓ Calculated</span>}
       </div>
 
       <div className="legacy-ui__step">
@@ -222,9 +222,9 @@ export default function LegacyFilterUI({ cityData, onInteract, onComplete }) {
             tick();
           }}
         >
-          8. 예약 요청 보내기
+          8. Send reservation request
         </button>
-        {reserved && <span className="legacy-ui__ok"> ✓ 완료</span>}
+        {reserved && <span className="legacy-ui__ok"> ✓ Done</span>}
       </div>
     </div>
   );

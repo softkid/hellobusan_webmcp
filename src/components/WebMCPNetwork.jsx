@@ -16,7 +16,7 @@ export default function WebMCPNetwork({ toolRegistry, webmcpSupported }) {
     <section className="panel network-panel">
       <div className="panel__header">
         <h2>WEBMCP NETWORK</h2>
-        <span className="panel__subtitle">연결된 부산 웹 서비스</span>
+        <span className="panel__subtitle">Connected Busan web services</span>
         <span className="pill pill--accent">{registeredCount}/{TOOL_DEFINITIONS.length} Tools</span>
       </div>
 
@@ -49,7 +49,7 @@ export default function WebMCPNetwork({ toolRegistry, webmcpSupported }) {
       <div className={`network-status ${webmcpSupported ? "network-status--live" : ""}`}>
         {webmcpSupported
           ? "✓ document.modelContext detected — external WebMCP agents can call these tools directly."
-          : "이 브라우저는 WebMCP(document.modelContext)를 아직 감지하지 못했습니다. 내장 에이전트는 정상 작동하며, WebMCP 지원 브라우저에서는 동일한 Tool을 외부 에이전트가 직접 호출할 수 있습니다."}
+          : "This browser hasn't reported WebMCP (document.modelContext) support yet. The built-in agent works normally either way — on a WebMCP-enabled browser, an external agent can call these same tools directly."}
       </div>
     </section>
   );

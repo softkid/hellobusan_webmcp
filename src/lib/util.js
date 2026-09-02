@@ -6,7 +6,7 @@ export function nextId(prefix = "id") {
 }
 
 export function formatTimestamp(date = new Date()) {
-  return date.toLocaleTimeString("ko-KR", { hour12: false });
+  return date.toLocaleTimeString("en-GB", { hour12: false });
 }
 
 export function krw(n) {

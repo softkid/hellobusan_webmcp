@@ -249,6 +249,16 @@ Any mode you haven't run yet shows `—`, never a placeholder number.
 
 ---
 
+## Language
+
+The UI is English-first throughout (buttons, logs, chat replies, the Agent
+Wallet, the benchmark panel) since hackathon judges shouldn't need to read
+Korean to follow the demo. Panel headings keep a small Korean caption
+underneath purely for local flavor (e.g. "AGENT WALLET / Your AI permission
+wallet"), and the goal parser (`src/lib/nlu.js`) still understands Korean
+input too — but nothing a judge needs to read to evaluate the app is
+Korean-only.
+
 ## What's simulated vs. what's real (read this before judging)
 
 Being upfront about this matters more to us than looking flashy:

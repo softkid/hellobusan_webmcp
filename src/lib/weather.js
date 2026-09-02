@@ -7,9 +7,9 @@
  */
 
 const CONDITIONS = [
-  { code: "clear", label: "맑음 (Clear)", rain: false, tempRange: [20, 29] },
-  { code: "cloudy", label: "흐림 (Cloudy)", rain: false, tempRange: [18, 25] },
-  { code: "rain", label: "비 (Rain)", rain: true, tempRange: [16, 22] },
+  { code: "clear", label: "Clear (맑음)", rain: false, tempRange: [20, 29] },
+  { code: "cloudy", label: "Cloudy (흐림)", rain: false, tempRange: [18, 25] },
+  { code: "rain", label: "Rain (비)", rain: true, tempRange: [16, 22] },
 ];
 
 function hashStr(s) {

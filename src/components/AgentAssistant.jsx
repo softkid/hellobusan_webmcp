@@ -1,40 +1,40 @@
 import { useState } from "react";
 import { krw } from "../lib/util.js";
 
-const SUGGESTIONS = ["실내 위주로 바꿔줘", "얼마가 들었어?", "왜 이렇게 짰어?", "다시 추천해줘"];
+const SUGGESTIONS = ["Switch to indoor plans", "How much did this cost?", "Why did you pick this?", "Try again"];
 
 function reply(text, { itinerary, onSubmitGoal, lastGoalText }) {
   const t = text.toLowerCase();
 
   if (itinerary.items.length === 0) {
     onSubmitGoal(text);
-    return "네, 그 목표로 부산 서비스를 조합해볼게요. 상단 Agent Activity에서 진행 상황을 확인하세요.";
+    return "On it — I'll line up Busan services for that goal. Watch Agent Activity above for progress.";
   }
 
-  if (t.includes("실내") || t.includes("비") || t.includes("indoor") || t.includes("rain")) {
-    onSubmitGoal(`${lastGoalText} (실내 위주로, 비가 온다고 가정)`);
-    return "실내 위주 일정으로 다시 계산하고 있어요. Weather → Places 순서로 다시 검색합니다.";
+  if (t.includes("indoor") || t.includes("rain") || t.includes("실내") || t.includes("비")) {
+    onSubmitGoal(`${lastGoalText} (indoor-focused, assume rain)`);
+    return "Re-planning with an indoor focus. Re-running Weather → Places now.";
   }
 
-  if (t.includes("얼마") || t.includes("cost") || t.includes("budget") || t.includes("비용")) {
-    return `현재 일정의 예상 비용은 ${krw(itinerary.totalCost)}이고, ${itinerary.partySize}인 기준입니다.`;
+  if (t.includes("cost") || t.includes("budget") || t.includes("얼마") || t.includes("비용")) {
+    return `The current plan costs about ${krw(itinerary.totalCost)}, for a party of ${itinerary.partySize}.`;
   }
 
-  if (t.includes("왜") || t.includes("why")) {
-    return "Agent Black Box에서 각 Tool Call의 INPUT/OUTPUT/PERMISSION/IMPACT를 확인할 수 있어요. 예산과 날씨, 아이 동반 여부를 기준으로 후보를 좁혔습니다.";
+  if (t.includes("why") || t.includes("왜")) {
+    return "Check the Agent Black Box for each tool call's INPUT/OUTPUT/PERMISSION/IMPACT — I narrowed candidates by budget, weather, and whether a kid is coming along.";
   }
 
-  if (t.includes("다시") || t.includes("추천") || t.includes("regenerate") || t.includes("again")) {
+  if (t.includes("again") || t.includes("regenerate") || t.includes("recommend") || t.includes("다시") || t.includes("추천")) {
     onSubmitGoal(lastGoalText || text);
-    return "같은 목표로 다시 계획을 세워볼게요.";
+    return "Re-planning with the same goal.";
   }
 
-  return `현재 ${itinerary.items.length}개 항목, ${krw(itinerary.totalCost)} 일정이 준비되어 있어요. 예약은 승인이 필요합니다.`;
+  return `Right now you have ${itinerary.items.length} stops totaling ${krw(itinerary.totalCost)}. The reservation still needs your approval.`;
 }
 
 export default function AgentAssistant({ itinerary, onSubmitGoal, lastGoalText }) {
   const [messages, setMessages] = useState([
-    { id: "m0", from: "agent", text: "안녕하세요! 오늘 부산에서 무엇을 하고 싶으신가요?" },
+    { id: "m0", from: "agent", text: "Hi! What would you like to do in Busan today?" },
   ]);
   const [text, setText] = useState("");
 
@@ -52,7 +52,7 @@ export default function AgentAssistant({ itinerary, onSubmitGoal, lastGoalText }
     <section className="panel assistant-panel">
       <div className="panel__header">
         <h2>AGENT ASSISTANT</h2>
-        <span className="panel__subtitle">AI 어시스턴트</span>
+        <span className="panel__subtitle">Chat with your agent</span>
       </div>
 
       <div className="assistant-messages">
@@ -78,7 +78,7 @@ export default function AgentAssistant({ itinerary, onSubmitGoal, lastGoalText }
           send();
         }}
       >
-        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="메시지를 입력하세요..." />
+        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Type a message..." />
         <button type="submit">➤</button>
       </form>
     </section>

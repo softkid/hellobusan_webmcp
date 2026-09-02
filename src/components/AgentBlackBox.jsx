@@ -19,12 +19,12 @@ export default function AgentBlackBox({ blackbox, selectedId, onSelect }) {
     <section className="panel blackbox-panel">
       <div className="panel__header">
         <h2>AGENT BLACK BOX</h2>
-        <span className="panel__subtitle">AI 의사결정 추적</span>
+        <span className="panel__subtitle">Every decision, inspectable</span>
       </div>
 
       <div className="blackbox-body">
         <div className="blackbox-list">
-          {blackbox.length === 0 && <div className="activity-empty">기록된 Tool Call이 없습니다.</div>}
+          {blackbox.length === 0 && <div className="activity-empty">No tool calls recorded yet.</div>}
           {blackbox.map((b) => (
             <button
               key={b.id}
@@ -81,7 +81,7 @@ export default function AgentBlackBox({ blackbox, selectedId, onSelect }) {
               )}
             </>
           ) : (
-            <div className="activity-empty">왼쪽에서 Tool Call을 선택하세요.</div>
+            <div className="activity-empty">Select a tool call on the left.</div>
           )}
         </div>
       </div>

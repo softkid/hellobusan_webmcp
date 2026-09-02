@@ -40,7 +40,7 @@ async function runDomScript(container, { onError }) {
 
   await click('[data-testid="check-weather"]');
   await click('[data-testid="district-Haeundae-gu"]');
-  await click('[data-testid="child-예"]');
+  await click('[data-testid="child-Yes"]');
   await click('[data-testid="budget-50000"]');
   await click('[data-testid="search-places"]');
   await sleep(80);
@@ -129,37 +129,37 @@ export default function EvaluationPanel({ cityData, engine }) {
     <section className="panel evaluation-panel">
       <div className="panel__header">
         <h2>WEBMCP EVALUATION</h2>
-        <span className="panel__subtitle">Human · DOM Agent · WebMCP Agent 실측 비교</span>
+        <span className="panel__subtitle">Human vs. DOM agent vs. WebMCP agent — measured live</span>
         <button className="panel__action" onClick={() => setManualOpen(true)}>
-          상세 결과 보기
+          Try it yourself
         </button>
       </div>
 
       <p className="evaluation-panel__note">
-        아래 숫자는 미리 정해둔 값이 아니라, 버튼을 눌러 실제로 이 페이지의 코드를 실행해서 측정한 값입니다.
-        아직 실행하지 않은 모드는 "—"로 표시됩니다. (PRD §14)
+        These numbers aren't preset — they're measured live by actually running this page's code when you
+        press a button below. Any mode you haven't run yet shows "—". (PRD §14)
       </p>
 
       <table className="eval-table">
         <thead>
           <tr>
             <th></th>
-            <th>Mode A<br /><span>사람(Manual)</span></th>
+            <th>Mode A<br /><span>Human (Manual)</span></th>
             <th>Mode B<br /><span>Agent + DOM</span></th>
             <th>Mode C<br /><span className="eval-table__c-label">Agent + WebMCP</span></th>
           </tr>
         </thead>
         <tbody>
-          <StatRow label="단계 (Steps)" a={results.A?.steps} b={results.B?.steps} c={results.C?.steps} />
+          <StatRow label="Steps" a={results.A?.steps} b={results.B?.steps} c={results.C?.steps} />
           <StatRow
-            label="상호작용 (Interactions)"
+            label="Interactions"
             a={results.A?.interactions}
             b={results.B?.interactions}
             c={results.C?.interactions}
           />
-          <StatRow label="오류 (Errors)" a={results.A?.errors ?? 0} b={results.B?.errors} c={results.C?.errors} />
+          <StatRow label="Errors" a={results.A?.errors ?? 0} b={results.B?.errors} c={results.C?.errors} />
           <StatRow
-            label="소요 시간 (Time)"
+            label="Time"
             a={results.A ? `${(results.A.timeMs / 1000).toFixed(1)}s` : null}
             b={results.B ? `${(results.B.timeMs / 1000).toFixed(1)}s` : null}
             c={results.C ? `${(results.C.timeMs / 1000).toFixed(1)}s` : null}
@@ -193,8 +193,8 @@ export default function EvaluationPanel({ cityData, engine }) {
           <div className="approval-modal manual-modal">
             <h3>Mode A — Try it yourself</h3>
             <p className="evaluation-panel__note">
-              WebMCP 없이, 예전 방식 그대로 클릭해서 같은 작업(비 오는 날 아이와 6시간, 5만원 코스 준비하기)을
-              완료해 보세요. 실제 클릭 수와 시간을 그대로 기록합니다.
+              Without WebMCP — click through the old-style form to complete the same task (a rainy‑day,
+              6‑hour, ₩50,000 plan with your kid). Your real click count and time are recorded as-is.
             </p>
             <LegacyFilterUI
               cityData={cityData}
@@ -205,7 +205,7 @@ export default function EvaluationPanel({ cityData, engine }) {
             />
             {manualStats.elapsedMs && (
               <div className="evaluation-panel__manual-result">
-                완료! {manualInteractionsRef.current}번 클릭, {(manualStats.elapsedMs / 1000).toFixed(1)}초 걸렸습니다.
+                Done! {manualInteractionsRef.current} clicks, {(manualStats.elapsedMs / 1000).toFixed(1)}s elapsed.
               </div>
             )}
             <div className="approval-modal__actions">

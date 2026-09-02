@@ -11,12 +11,12 @@ export default function PlanPanel({ itinerary, agentStatus }) {
     <section className="panel plan-panel">
       <div className="panel__header">
         <h2>AI PLAN</h2>
-        <span className="panel__subtitle">AI가 만든 부산 일정 {agentStatus === "working" && "(생성 중...)"}</span>
+        <span className="panel__subtitle">Busan itinerary, built by your agent {agentStatus === "working" && "(planning…)"}</span>
         <div className="plan-panel__meta">
           {items.length > 0 && (
             <>
-              <span>예상 비용 <strong>{krw(totalCost)}</strong></span>
-              <span>예상 시간 <strong>{hours}시간</strong></span>
+              <span>Est. cost <strong>{krw(totalCost)}</strong></span>
+              <span>Est. time <strong>{hours}h</strong></span>
             </>
           )}
         </div>
@@ -30,9 +30,9 @@ export default function PlanPanel({ itinerary, agentStatus }) {
 
       {items.length === 0 && agentStatus !== "working" ? (
         <div className="plan-panel__empty">
-          상단의 <strong>YOUR GOAL</strong>에 목표를 입력하고 ✦ 버튼을 눌러보세요.
+          Type a goal in <strong>YOUR GOAL</strong> above and press ✦.
           <br />
-          예: "오늘 비가 오는데 5만원 안에서 아이와 6시간 동안 부산에서 할 일을 만들어줘."
+          e.g. "It's raining today. Plan 6 hours in Busan with my kid for under ₩50,000."
         </div>
       ) : (
         <div className="plan-cards">
@@ -50,14 +50,14 @@ export default function PlanPanel({ itinerary, agentStatus }) {
 
       {removed && removed.length > 0 && (
         <div className="plan-panel__note">
-          시간/예산 제약에 맞추기 위해 {removed.length}개 항목을 제외했습니다: {removed.map((r) => r.name).join(", ")}
+          Dropped {removed.length} stop{removed.length > 1 ? "s" : ""} to fit your time/budget: {removed.map((r) => r.name).join(", ")}
         </div>
       )}
 
       {reservation && (
         <div className={`plan-panel__reservation plan-panel__reservation--${reservation.status}`}>
-          {reservation.status === "confirmed" ? "✓" : "⚠"} {reservation.name} 예약{" "}
-          {reservation.status === "confirmed" ? "확정됨" : reservation.status}
+          {reservation.status === "confirmed" ? "✓" : "⚠"} {reservation.name} reservation{" "}
+          {reservation.status === "confirmed" ? "confirmed" : reservation.status}
         </div>
       )}
 

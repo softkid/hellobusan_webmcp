@@ -14,12 +14,12 @@ export default function AgentActivity({ activity }) {
     <section className="panel activity-panel">
       <div className="panel__header">
         <h2>AGENT ACTIVITY</h2>
-        <span className="panel__subtitle">AI 활동 로그 (실시간)</span>
-        <span className="pill pill--live">● 실시간</span>
+        <span className="panel__subtitle">Live agent activity log</span>
+        <span className="pill pill--live">● Live</span>
       </div>
 
       <div className="activity-list">
-        {activity.length === 0 && <div className="activity-empty">아직 활동이 없습니다.</div>}
+        {activity.length === 0 && <div className="activity-empty">No activity yet.</div>}
         {activity.map((a) => (
           <div className={`activity-item activity-item--${a.status}`} key={a.id}>
             <span className="activity-item__icon">{STATUS_ICON[a.status] || "•"}</span>
