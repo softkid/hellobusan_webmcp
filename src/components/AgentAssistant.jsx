@@ -1,115 +1,86 @@
-import React, { useState } from "react";
-import { MessageSquare, Send } from "lucide-react";
-import { TRANSLATIONS } from "../constants/translations.js";
+import { useState } from "react";
+import { krw } from "../lib/util.js";
 
-export default function AgentAssistant({ lang = "en" }) {
-  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+const SUGGESTIONS = ["실내 위주로 바꿔줘", "얼마가 들었어?", "왜 이렇게 짰어?", "다시 추천해줘"];
 
+function reply(text, { itinerary, onSubmitGoal, lastGoalText }) {
+  const t = text.toLowerCase();
+
+  if (itinerary.items.length === 0) {
+    onSubmitGoal(text);
+    return "네, 그 목표로 부산 서비스를 조합해볼게요. 상단 Agent Activity에서 진행 상황을 확인하세요.";
+  }
+
+  if (t.includes("실내") || t.includes("비") || t.includes("indoor") || t.includes("rain")) {
+    onSubmitGoal(`${lastGoalText} (실내 위주로, 비가 온다고 가정)`);
+    return "실내 위주 일정으로 다시 계산하고 있어요. Weather → Places 순서로 다시 검색합니다.";
+  }
+
+  if (t.includes("얼마") || t.includes("cost") || t.includes("budget") || t.includes("비용")) {
+    return `현재 일정의 예상 비용은 ${krw(itinerary.totalCost)}이고, ${itinerary.partySize}인 기준입니다.`;
+  }
+
+  if (t.includes("왜") || t.includes("why")) {
+    return "Agent Black Box에서 각 Tool Call의 INPUT/OUTPUT/PERMISSION/IMPACT를 확인할 수 있어요. 예산과 날씨, 아이 동반 여부를 기준으로 후보를 좁혔습니다.";
+  }
+
+  if (t.includes("다시") || t.includes("추천") || t.includes("regenerate") || t.includes("again")) {
+    onSubmitGoal(lastGoalText || text);
+    return "같은 목표로 다시 계획을 세워볼게요.";
+  }
+
+  return `현재 ${itinerary.items.length}개 항목, ${krw(itinerary.totalCost)} 일정이 준비되어 있어요. 예약은 승인이 필요합니다.`;
+}
+
+export default function AgentAssistant({ itinerary, onSubmitGoal, lastGoalText }) {
   const [messages, setMessages] = useState([
-    { sender: "user", text: lang === "en" ? "Please focus on indoor places due to rain today." : "오늘 비가 오는데 실내 위주로 부탁해." },
-    { sender: "agent", text: lang === "en" ? "Rebuilding itinerary for indoor priority. Science Museum -> Indoor Experience -> Aquarium updated." : "실내 위주로 일정을 재구성하고 있어요. 과학관 ➔ 실내 체험 ➔ 아쿠아리움으로 변경했어요." },
-    { sender: "user", text: lang === "en" ? "Change dinner option to seafood." : "저녁은 해산물로 바꿔줘." },
-    { sender: "agent", text: lang === "en" ? "Re-searching seafood restaurants and updating itinerary." : "해산물 맛집 3곳을 검색해 일정을 업데이트할게요." }
+    { id: "m0", from: "agent", text: "안녕하세요! 오늘 부산에서 무엇을 하고 싶으신가요?" },
   ]);
+  const [text, setText] = useState("");
 
-  const [inputMsg, setInputMsg] = useState("");
-
-  const handleSend = () => {
-    if (!inputMsg.trim()) return;
-    const userText = inputMsg;
-    setMessages((prev) => [...prev, { sender: "user", text: userText }]);
-    setInputMsg("");
-
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          sender: "agent",
-          text: lang === "en"
-            ? `Executing WebMCP tools (search_places / update_itinerary) for prompt: "${userText}".`
-            : `요청하신 "${userText}" 조건으로 WebMCP Tool을 재실행합니다.`
-        }
-      ]);
-    }, 600);
-  };
+  function send(value) {
+    const v = (value ?? text).trim();
+    if (!v) return;
+    const userMsg = { id: `u_${Date.now()}`, from: "user", text: v };
+    const agentText = reply(v, { itinerary, onSubmitGoal, lastGoalText });
+    const agentMsg = { id: `a_${Date.now()}`, from: "agent", text: agentText };
+    setMessages((prev) => [...prev, userMsg, agentMsg]);
+    setText("");
+  }
 
   return (
-    <div className="glass-panel" style={{ padding: "0.85rem", height: "100%", display: "flex", flexDirection: "column" }}>
-      
-      {/* Title */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.6rem" }}>
-        <div>
-          <h3 style={{ fontSize: "0.85rem", margin: 0, color: "#ffffff", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-            <MessageSquare size={14} color="#00f2fe" /> {t.assistantTitle}
-          </h3>
-          <span style={{ fontSize: "0.65rem", color: "var(--text-dim)" }}>{t.assistantSub}</span>
-        </div>
+    <section className="panel assistant-panel">
+      <div className="panel__header">
+        <h2>AGENT ASSISTANT</h2>
+        <span className="panel__subtitle">AI 어시스턴트</span>
       </div>
 
-      {/* Chat Messages Feed */}
-      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "0.45rem", paddingRight: "0.2rem", marginBottom: "0.5rem" }}>
-        {messages.map((m, idx) => (
-          <div
-            key={idx}
-            style={{
-              display: "flex",
-              justifyContent: m.sender === "user" ? "flex-end" : "flex-start"
-            }}
-          >
-            <div
-              style={{
-                maxWidth: "85%",
-                padding: "0.45rem 0.65rem",
-                borderRadius: "8px",
-                fontSize: "0.72rem",
-                background: m.sender === "user" ? "rgba(127, 86, 217, 0.25)" : "rgba(10, 15, 26, 0.8)",
-                border: m.sender === "user" ? "1px solid rgba(127, 86, 217, 0.4)" : "1px solid var(--border)",
-                color: m.sender === "user" ? "#ffffff" : "var(--text-main)"
-              }}
-            >
-              {m.text}
-            </div>
+      <div className="assistant-messages">
+        {messages.map((m) => (
+          <div key={m.id} className={`assistant-message assistant-message--${m.from}`}>
+            {m.text}
           </div>
         ))}
       </div>
 
-      {/* Chat Input Bar */}
-      <div style={{ display: "flex", gap: "0.35rem" }}>
-        <input
-          type="text"
-          value={inputMsg}
-          onChange={(e) => setInputMsg(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          placeholder={t.typeMsg}
-          style={{
-            flex: 1,
-            background: "rgba(10, 15, 26, 0.9)",
-            border: "1px solid var(--border)",
-            borderRadius: "6px",
-            padding: "0.35rem 0.6rem",
-            color: "#ffffff",
-            fontSize: "0.75rem",
-            outline: "none"
-          }}
-        />
-        <button
-          onClick={handleSend}
-          style={{
-            background: "var(--primary-gradient)",
-            border: "none",
-            borderRadius: "6px",
-            padding: "0.35rem 0.6rem",
-            color: "#070a13",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          <Send size={13} />
-        </button>
+      <div className="assistant-suggestions">
+        {SUGGESTIONS.map((s) => (
+          <button key={s} className="chip" onClick={() => send(s)}>
+            {s}
+          </button>
+        ))}
       </div>
 
-    </div>
+      <form
+        className="assistant-input"
+        onSubmit={(e) => {
+          e.preventDefault();
+          send();
+        }}
+      >
+        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="메시지를 입력하세요..." />
+        <button type="submit">➤</button>
+      </form>
+    </section>
   );
 }

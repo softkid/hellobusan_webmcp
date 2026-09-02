@@ -1,16 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HELLOBUSAN — Human-Controlled Agentic City</title>
-    <meta name="description" content="Agentic Web Interface connecting human intent with Busan city services via WebMCP Tools and Permission Wallet." />
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <meta
+      name="description"
+      content="HelloBusan — Human-Controlled Agentic City. AI agents use real Busan services through WebMCP, with your permission and in your control."
+    />
+    <!--
+      WebMCP origin trial (optional).
+      If you register an origin trial token for your own deployment domain at
+      https://developer.chrome.com/origintrials/#/trials/active, paste it below.
+      Without a token, HelloBusan still works: it feature-detects
+      `document.modelContext` at runtime and only registers WebMCP tools when
+      the browser actually supports it (e.g. Chrome Canary with the WebMCP
+      flag, or a browser that ships WebMCP by default). See README.md.
+    -->
+    <!-- <meta http-equiv="origin-trial" content="PASTE_YOUR_TOKEN_HERE" /> -->
+    <title>HelloBusan — Human-Controlled Agentic City</title>
   </head>
   <body>
     <div id="root"></div>
