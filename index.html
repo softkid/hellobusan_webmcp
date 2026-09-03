@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
@@ -8,16 +8,7 @@
       name="description"
       content="HelloBusan — Human-Controlled Agentic City. AI agents use real Busan services through WebMCP, with your permission and in your control."
     />
-    <!--
-      WebMCP origin trial (optional).
-      If you register an origin trial token for your own deployment domain at
-      https://developer.chrome.com/origintrials/#/trials/active, paste it below.
-      Without a token, HelloBusan still works: it feature-detects
-      `document.modelContext` at runtime and only registers WebMCP tools when
-      the browser actually supports it (e.g. Chrome Canary with the WebMCP
-      flag, or a browser that ships WebMCP by default). See README.md.
-    -->
-    <!-- <meta http-equiv="origin-trial" content="PASTE_YOUR_TOKEN_HERE" /> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <title>HelloBusan — Human-Controlled Agentic City</title>
   </head>
   <body>

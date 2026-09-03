@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
-import { Save, MapPin, Navigation, Map as MapIcon, Layers } from "lucide-react";
+import "leaflet/dist/leaflet.css";
+import { Save, MapPin, Map as MapIcon, Layers } from "lucide-react";
 import { TRANSLATIONS } from "../constants/translations.js";
 
 const PIN_COLORS = ["#22c55e", "#f59e0b", "#38bdf8", "#a78bfa", "#f472b6", "#fb7185"];
@@ -96,14 +97,14 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
   const activeItems = itinerary && itinerary.length > 0 ? itinerary.map((item, idx) => ({
     step: idx + 1,
     time: item.time ? item.time.split(" - ")[0] : defaultItinerary[idx % defaultItinerary.length].time,
-    title: item.title,
-    subtitle: item.category || "Recommended Venue",
+    title: item.title || item.name || `Stop ${idx + 1}`,
+    subtitle: item.category || item.subtitle || "Recommended Venue",
     category: item.category || "General",
-    cost: item.cost || 0,
+    cost: item.cost || item.estCost || 0,
     image: defaultItinerary[idx % defaultItinerary.length].image,
     lat: item.lat || defaultItinerary[idx % defaultItinerary.length].lat,
     lng: item.lng || defaultItinerary[idx % defaultItinerary.length].lng,
-    address: item.location || defaultItinerary[idx % defaultItinerary.length].address
+    address: item.location || item.address || "Busan"
   })) : defaultItinerary;
 
   const currentTotalCost = totalCost || activeItems.reduce((acc, curr) => acc + curr.cost, 0);
@@ -164,7 +165,16 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
     }
 
     const map = leafletMapRef.current;
-    setTimeout(() => { map.invalidateSize(); }, 200);
+    
+    // Multiple invalidateSize calls to fix tile calculation
+    const timer1 = setTimeout(() => { map.invalidateSize(); }, 50);
+    const timer2 = setTimeout(() => { map.invalidateSize(); }, 300);
+    const timer3 = setTimeout(() => { map.invalidateSize(); }, 800);
+
+    const handleResize = () => {
+      map.invalidateSize();
+    };
+    window.addEventListener("resize", handleResize);
 
     // Clear old markers & polyline
     markersRef.current.forEach((m) => m.remove());
@@ -207,7 +217,7 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
       });
     };
 
-    filteredItems.forEach((item, index) => {
+    filteredItems.forEach((item) => {
       if (item.lat && item.lng) {
         const pinColor = PIN_COLORS[(item.step - 1) % PIN_COLORS.length];
         const marker = L.marker([item.lat, item.lng], {
@@ -237,6 +247,13 @@ export default function AIPlanMap({ itinerary, totalCost, dailyBudgetLimit, lang
       polylineRef.current = polyline;
       map.fitBounds(polyline.getBounds(), { padding: [40, 40] });
     }
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+      window.removeEventListener("resize", handleResize);
+    };
   }, [activeItems, mapStyle, selectedFilter]);
 
   return (
